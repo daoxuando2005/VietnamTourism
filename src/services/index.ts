@@ -1,0 +1,8 @@
+export { apiClient, ApiClientError } from './api/client'
+export { isSupabaseConfigured } from './supabase/client'
+export { authService } from './auth.service'
+export { destinationsService } from './destinations.service'
+export { reviewsService } from './reviews.service'
+export { favoritesService } from './favorites.service'
+export { searchService } from './search.service'
+export type { SearchResults } from './search.service'

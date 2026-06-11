@@ -1,0 +1,16 @@
+export const ROUTES = {
+  home: '/',
+  map: '/map',
+  destinations: '/destinations',
+  destinationDetail: (slug: string) => `/destinations/${slug}` as const,
+  reviews: '/reviews',
+  feed: '/feed',
+  search: '/search',
+  favorites: '/favorites',
+  profile: '/profile',
+  profileByUsername: (username: string) => `/profile/${username}` as const,
+  profileEdit: '/profile/edit',
+  login: '/auth/login',
+  register: '/auth/register',
+  admin: '/admin',
+} as const
