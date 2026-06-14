@@ -1,20 +1,23 @@
 import type { User } from './user'
+import type { Comment } from './comment'
 import type { Destination } from './destination'
 
-export interface Review {
+export interface Post {
   id: string
-  destinationId: string
   userId: string
-  rating: number
   title?: string
   content: string
+  image?: string
+  imageUrl?: string
+  images?: string[]
+  likeCount: number
+  commentCount: number
+  destinationId?: string
   createdAt: string
   updatedAt?: string
-  author?: {
-    username: string
-    displayName: string
-    avatarUrl?: string
-  }
+  
+  // Relations
   user?: User
+  comments?: Comment[]
   destination?: Destination
 }

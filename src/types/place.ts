@@ -1,13 +1,7 @@
-export type VietnamRegion = 'north' | 'central' | 'south'
+import type { Province, VietnamRegion } from './province'
 
-export interface Province {
-  id: string
-  name: string
-  region: VietnamRegion
-  /** Map marker position as percentage (0–100) within the map container */
-  mapX: number
-  mapY: number
-}
+export type { Province, VietnamRegion }
+
 
 export interface Place {
   id: string

@@ -5,15 +5,30 @@ export type DestinationRegion =
   | 'highlands'
   | 'coastal'
 
+export type DestinationCategory =
+  | 'Beach'
+  | 'Mountain'
+  | 'Historical'
+  | 'Cultural'
+  | 'Nature'
+  | 'City'
+
 export interface Destination {
   id: string
   name: string
   slug: string
-  region: DestinationRegion
+  provinceId: string
   description: string
-  imageUrl: string
+  rating: number
+  image: string
+  category: DestinationCategory
   latitude: number
   longitude: number
-  rating: number
-  reviewCount: number
+  
+  // Backward compatibility fields
+  province?: string
+  region?: DestinationRegion | string
+  imageUrl?: string
+  reviewCount?: number
+  createdAt?: string
 }

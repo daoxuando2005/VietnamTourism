@@ -1,28 +1,9 @@
 import type { Place, Province, RegionGroup } from '@/types/place'
+import { provinces as allProvinces } from './provinces'
 
-export const provinces: Province[] = [
-  // Northern Vietnam
-  { id: 'hanoi', name: 'Hanoi', region: 'north', mapX: 52, mapY: 22 },
-  { id: 'quang-ninh', name: 'Quang Ninh', region: 'north', mapX: 58, mapY: 14 },
-  { id: 'lao-cai', name: 'Lao Cai', region: 'north', mapX: 42, mapY: 10 },
-  { id: 'ninh-binh', name: 'Ninh Binh', region: 'north', mapX: 50, mapY: 28 },
-  { id: 'ha-giang', name: 'Ha Giang', region: 'north', mapX: 38, mapY: 6 },
+export const provinces: Province[] = allProvinces
 
-  // Central Vietnam
-  { id: 'thua-thien-hue', name: 'Thua Thien Hue', region: 'central', mapX: 54, mapY: 40 },
-  { id: 'da-nang', name: 'Da Nang', region: 'central', mapX: 58, mapY: 46 },
-  { id: 'quang-nam', name: 'Quang Nam', region: 'central', mapX: 56, mapY: 48 },
-  { id: 'khanh-hoa', name: 'Khanh Hoa', region: 'central', mapX: 60, mapY: 58 },
-  { id: 'quang-binh', name: 'Quang Binh', region: 'central', mapX: 50, mapY: 36 },
-  { id: 'lam-dong', name: 'Lam Dong', region: 'central', mapX: 56, mapY: 66 },
 
-  // Southern Vietnam
-  { id: 'ho-chi-minh', name: 'Ho Chi Minh City', region: 'south', mapX: 54, mapY: 82 },
-  { id: 'kien-giang', name: 'Kien Giang', region: 'south', mapX: 36, mapY: 88 },
-  { id: 'can-tho', name: 'Can Tho', region: 'south', mapX: 48, mapY: 78 },
-  { id: 'ba-ria-vung-tau', name: 'Ba Ria - Vung Tau', region: 'south', mapX: 58, mapY: 80 },
-  { id: 'an-giang', name: 'An Giang', region: 'south', mapX: 42, mapY: 84 },
-]
 
 export const places: Place[] = [
   {
