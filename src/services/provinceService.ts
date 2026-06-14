@@ -1,5 +1,5 @@
 import type { Province } from '@/types'
-import { provinces } from '@/data'
+import { provinceRepository } from '@/repositories/provinceRepository'
 
 /**
  * Service to manage province operations.
@@ -11,7 +11,7 @@ export const provinceService = {
    * Supabase query: await supabase.from('provinces').select('*').order('name')
    */
   async getAllProvinces(): Promise<Province[]> {
-    return Promise.resolve(provinces)
+    return provinceRepository.getAllProvinces()
   },
 
   /**
@@ -19,7 +19,6 @@ export const provinceService = {
    * Supabase query: await supabase.from('provinces').select('*').eq('slug', slug).single()
    */
   async getProvinceBySlug(slug: string): Promise<Province | null> {
-    const province = provinces.find((p) => p.slug === slug)
-    return Promise.resolve(province || null)
+    return provinceRepository.getProvinceBySlug(slug)
   },
 }

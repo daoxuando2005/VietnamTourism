@@ -1,9 +1,6 @@
-// Supabase client placeholder — configure when credentials are available.
-// import { createClient } from '@supabase/supabase-js'
+import { supabase } from '@/lib/supabase'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? ''
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY ?? ''
-
-export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
-
-// export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export { supabase }
+export const isSupabaseConfigured = Boolean(
+  import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY
+)

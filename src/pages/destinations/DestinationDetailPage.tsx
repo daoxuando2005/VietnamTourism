@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { LoadingSpinner, Card, ReviewList, ReviewForm } from '@/components'
+import { LoadingSpinner, Card, ReviewList, ReviewForm, FavoriteButton } from '@/components'
 import { destinationService, provinceService, reviewService } from '@/services'
 import { ROUTES } from '@/routes/paths'
 import type { Destination, Province, Review } from '@/types'
@@ -117,22 +117,29 @@ export function DestinationDetailPage() {
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6 text-white sm:p-8">
-          <div className="flex flex-wrap items-center gap-2 mb-2">
-            <span className="rounded-full bg-teal-600/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider border border-teal-500/20">
-              {destination.category}
-            </span>
+        <div className="absolute bottom-0 left-0 right-0 p-6 text-white sm:p-8 flex justify-between items-end gap-4">
+          <div>
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="rounded-full bg-teal-600/90 px-3 py-1 text-[10px] font-bold uppercase tracking-wider border border-teal-500/20">
+                {destination.category}
+              </span>
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
+              {destination.name}
+            </h1>
+            <p className="mt-2 text-sm text-gray-200 flex items-center gap-1.5 font-medium">
+              <svg className="h-4 w-4 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              {provinceName}
+            </p>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-            {destination.name}
-          </h1>
-          <p className="mt-2 text-sm text-gray-200 flex items-center gap-1.5 font-medium">
-            <svg className="h-4 w-4 text-teal-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-            {provinceName}
-          </p>
+          <FavoriteButton
+            destinationId={destination.id}
+            size="lg"
+            className="shrink-0 mb-1 border-transparent shadow-md bg-white hover:bg-gray-50"
+          />
         </div>
       </div>
 

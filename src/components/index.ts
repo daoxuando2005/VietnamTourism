@@ -24,3 +24,10 @@ export {
 export { ReviewCard } from './reviews/ReviewCard'
 export { ReviewList } from './reviews/ReviewList'
 export { ReviewForm } from './reviews/ReviewForm'
+
+// Favorites components
+export { FavoriteButton } from './common/FavoriteButton'
+
+// Feed components
+export { FeedCard } from './feed/FeedCard'
+

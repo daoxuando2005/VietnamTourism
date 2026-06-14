@@ -1,0 +1,5 @@
+export { profileRepository } from './profileRepository'
+export { destinationRepository } from './destinationRepository'
+export { reviewRepository } from './reviewRepository'
+export { favoriteRepository } from './favoriteRepository'
+export { provinceRepository } from './provinceRepository'

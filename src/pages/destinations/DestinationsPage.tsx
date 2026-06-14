@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { PageHeader, LoadingSpinner } from '@/components'
+import { PageHeader, LoadingSpinner, FavoriteButton } from '@/components'
 import { ROUTES } from '@/routes/paths'
 import { destinationService, provinceService } from '@/services'
 import type { Destination, Province, DestinationCategory } from '@/types'
@@ -187,6 +187,7 @@ export function DestinationsPage() {
                 <span className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-teal-800 shadow-sm border border-gray-100">
                   {dest.category}
                 </span>
+                <FavoriteButton destinationId={dest.id} className="absolute right-3 top-3" />
               </div>
               <div className="flex flex-1 flex-col justify-between p-4">
                 <div className="space-y-1">

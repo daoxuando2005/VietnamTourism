@@ -1,3 +1,6 @@
+import type { User } from './user'
+import type { Destination } from './destination'
+
 export type FeedPostType = 'review' | 'photo' | 'tip' | 'check-in'
 
 export interface FeedPost {
@@ -15,4 +18,18 @@ export interface FeedPost {
     displayName: string
     avatarUrl?: string
   }
+}
+
+export type FeedActivityType = 'review' | 'favorite'
+
+export interface FeedActivity {
+  id: string
+  type: FeedActivityType
+  userId: string
+  destinationId: string
+  createdAt: string
+  user?: User
+  destination?: Destination
+  rating?: number
+  reviewContent?: string
 }

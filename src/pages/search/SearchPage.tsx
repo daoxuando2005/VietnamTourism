@@ -1,17 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Card, PageHeader } from '@/components'
 import { useDebounce } from '@/hooks'
 
 export function SearchPage() {
   const [searchParams] = useSearchParams()
-  const [query, setQuery] = useState(searchParams.get('q') ?? '')
-  const debouncedQuery = useDebounce(query)
+  const qParam = searchParams.get('q') ?? ''
+  const [query, setQuery] = useState(qParam)
+  const [prevQParam, setPrevQParam] = useState(qParam)
 
-  useEffect(() => {
-    const q = searchParams.get('q')
-    if (q) setQuery(q)
-  }, [searchParams])
+  if (qParam !== prevQParam) {
+    setPrevQParam(qParam)
+    setQuery(qParam)
+  }
+
+  const debouncedQuery = useDebounce(query)
 
   return (
     <div>

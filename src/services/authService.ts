@@ -1,63 +1,86 @@
+import { supabase } from '@/lib/supabase'
 import type { User, RegisterPayload } from '@/types'
-import { mockUsers } from '@/data/users'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 
-const SESSION_KEY = 'vietnam_tourism_auth_user'
+// Helper function to query/create profiles for mapped auth users
+async function ensureUserProfile(supabaseUser: SupabaseUser): Promise<User> {
+  const userId = supabaseUser.id
+  const email = supabaseUser.email || ''
+  const metadata = supabaseUser.user_metadata || {}
+  const username = metadata.username || email.split('@')[0] || 'user'
+  const displayName = metadata.displayName || username
 
-/**
- * Service to manage authentication.
- * Prepared for future Supabase Auth integration.
- */
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single()
+
+  if (profile) {
+    return {
+      id: profile.id,
+      username: profile.username,
+      displayName: profile.display_name || profile.username,
+      avatarUrl: profile.avatar_url,
+      bio: profile.bio,
+      createdAt: profile.created_at,
+    }
+  }
+
+  // Create profile fallback (if Postgres trigger hasn't fired yet)
+  const cleanUsername = username.toLowerCase().replace(/[^a-z0-9]/g, '')
+  const newProfile = {
+    id: userId,
+    username: cleanUsername,
+    display_name: displayName,
+    avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+    bio: 'Explorer of Vietnam.',
+  }
+
+  const { data: inserted } = await supabase
+    .from('profiles')
+    .insert(newProfile)
+    .select()
+    .single()
+
+  if (inserted) {
+    return {
+      id: inserted.id,
+      username: inserted.username,
+      displayName: inserted.display_name || inserted.username,
+      avatarUrl: inserted.avatar_url,
+      bio: inserted.bio,
+      createdAt: inserted.created_at,
+    }
+  }
+
+  return {
+    id: userId,
+    username: cleanUsername,
+    displayName: displayName,
+    createdAt: new Date().toISOString(),
+  }
+}
+
 export const authService = {
-  /**
-   * Sign in a user.
-   * Supabase query: await supabase.auth.signInWithPassword({ email, password })
-   */
   async login(email: string, password: string): Promise<User> {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 600))
-
     if (!email || !password) {
       throw new Error('Email and password are required.')
     }
 
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters.')
-    }
-
-    // Lookup matching mock user by email (e.g. user1@example.com)
-    let matchedUser = mockUsers.find((u) => {
-      const emailPrefix = email.split('@')[0].toLowerCase()
-      return (
-        u.username.toLowerCase() === emailPrefix ||
-        u.id.toLowerCase() === emailPrefix ||
-        email.toLowerCase().startsWith(u.username.toLowerCase())
-      )
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     })
 
-    if (!matchedUser) {
-      // Create user on the fly based on email
-      const username = email.split('@')[0]
-      matchedUser = {
-        id: `user-${Date.now()}`,
-        username: username.toLowerCase().replace(/[^a-z0-9]/g, ''),
-        displayName: username.charAt(0).toUpperCase() + username.slice(1),
-        bio: 'Explorer of Vietnam.',
-        createdAt: new Date().toISOString(),
-      }
+    if (error || !data.user) {
+      throw new Error(error?.message || 'Login failed')
     }
 
-    localStorage.setItem(SESSION_KEY, JSON.stringify(matchedUser))
-    return matchedUser
+    return ensureUserProfile(data.user)
   },
 
-  /**
-   * Register a new user.
-   * Supabase query: await supabase.auth.signUp({ email, password, options: { data: { username, displayName } } })
-   */
   async register(data: RegisterPayload): Promise<User> {
-    // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 600))
-
     const { email, password, username, displayName } = data
 
     if (!email || !password || !username || !displayName) {
@@ -68,41 +91,39 @@ export const authService = {
       throw new Error('Password must be at least 6 characters.')
     }
 
-    const newUser: User = {
-      id: `user-${Date.now()}`,
-      username: username.toLowerCase().trim().replace(/[^a-z0-9]/g, ''),
-      displayName: displayName.trim(),
-      bio: 'New explorer of Vietnam.',
-      createdAt: new Date().toISOString(),
+    const cleanUsername = username.toLowerCase().trim().replace(/[^a-z0-9]/g, '')
+
+    const { data: signUpData, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username: cleanUsername,
+          displayName: displayName.trim(),
+        },
+      },
+    })
+
+    if (error || !signUpData.user) {
+      throw new Error(error?.message || 'Registration failed')
     }
 
-    localStorage.setItem(SESSION_KEY, JSON.stringify(newUser))
-    return newUser
+    return ensureUserProfile(signUpData.user)
   },
 
-  /**
-   * Log out user session.
-   * Supabase query: await supabase.auth.signOut()
-   */
   async logout(): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    localStorage.removeItem(SESSION_KEY)
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      throw new Error(error.message)
+    }
   },
 
-  /**
-   * Get current authenticated user session.
-   * Supabase query: const { data: { user } } = await supabase.auth.getUser()
-   */
   async getCurrentUser(): Promise<User | null> {
-    const session = localStorage.getItem(SESSION_KEY)
-    if (!session) return null
-
-    try {
-      return JSON.parse(session)
-    } catch {
-      return null
-    }
+    const { data: { user }, error } = await supabase.auth.getUser()
+    if (error || !user) return null
+    return ensureUserProfile(user)
   },
 }
+
 export type { User }
 export default authService
