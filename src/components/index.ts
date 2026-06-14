@@ -19,3 +19,8 @@ export {
   DestinationPanel,
   ProvinceSelector,
 } from './map'
+
+// Reviews components
+export { ReviewCard } from './reviews/ReviewCard'
+export { ReviewList } from './reviews/ReviewList'
+export { ReviewForm } from './reviews/ReviewForm'

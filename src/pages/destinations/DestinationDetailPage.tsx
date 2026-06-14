@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { LoadingSpinner, Card } from '@/components'
-import { destinationService, provinceService } from '@/services'
+import { LoadingSpinner, Card, ReviewList, ReviewForm } from '@/components'
+import { destinationService, provinceService, reviewService } from '@/services'
 import { ROUTES } from '@/routes/paths'
-import type { Destination, Province } from '@/types'
+import type { Destination, Province, Review } from '@/types'
 
 export function DestinationDetailPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -11,6 +11,7 @@ export function DestinationDetailPage() {
   const [destination, setDestination] = useState<Destination | null>(null)
   const [province, setProvince] = useState<Province | null>(null)
   const [related, setRelated] = useState<Destination[]>([])
+  const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -39,10 +40,14 @@ export function DestinationDetailPage() {
         // Filter out current destination
         relatedDests = relatedDests.filter((r) => r.id !== dest.id).slice(0, 3)
 
+        // Fetch reviews for this destination
+        const destReviews = await reviewService.getReviewsByDestination(dest.id)
+
         if (active) {
           setDestination(dest)
           setProvince(prov)
           setRelated(relatedDests)
+          setReviews(destReviews)
         }
       } catch (err) {
         console.error('Error loading destination details:', err)
@@ -208,6 +213,24 @@ export function DestinationDetailPage() {
               </div>
             </div>
           </Card>
+        </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="border-t border-gray-200 pt-8 grid gap-8 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <h3 className="text-xl font-bold text-gray-900 sm:text-2xl">
+            Traveler Reviews ({reviews.length})
+          </h3>
+          <ReviewList reviews={reviews} />
+        </div>
+        <div>
+          <ReviewForm
+            destinationId={destination.id}
+            onReviewSubmitted={(newReview) => {
+              setReviews((prev) => [newReview, ...prev])
+            }}
+          />
         </div>
       </div>
 

@@ -1,27 +1,53 @@
-import { Card, PageHeader } from '@/components'
+import { useState, useEffect } from 'react'
+import { PageHeader, LoadingSpinner, ReviewList } from '@/components'
+import { reviewService } from '@/services'
+import type { Review } from '@/types'
 
 export function ReviewsPage() {
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    let active = true
+
+    const loadReviews = async () => {
+      setLoading(true)
+      try {
+        const data = await reviewService.getAllReviews()
+        if (active) {
+          setReviews(data)
+        }
+      } catch (err) {
+        console.error('Failed to load reviews:', err)
+      } finally {
+        if (active) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadReviews()
+
+    return () => {
+      active = false
+    }
+  }, [])
+
   return (
-    <div>
+    <div className="space-y-6 sm:space-y-8 animate-fade-in">
       <PageHeader
-        title="Reviews"
-        description="Read honest reviews from travelers who have visited Vietnam."
+        title="Traveler Reviews"
+        description="Read honest reviews and ratings from travelers who have explored beautiful places across Vietnam."
       />
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Card key={i}>
-            <div className="flex items-start gap-3">
-              <div className="h-10 w-10 shrink-0 rounded-full bg-emerald-100" />
-              <div>
-                <p className="font-medium text-gray-900">Traveler Review #{i}</p>
-                <p className="mt-1 text-sm text-gray-600">
-                  Reviews will be loaded from the reviews service.
-                </p>
-              </div>
-            </div>
-          </Card>
-        ))}
-      </div>
+
+      {loading ? (
+        <LoadingSpinner label="Loading traveler reviews..." />
+      ) : (
+        <div className="max-w-3xl mx-auto">
+          <ReviewList reviews={reviews} />
+        </div>
+      )}
     </div>
   )
 }
+export default ReviewsPage
