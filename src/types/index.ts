@@ -1,6 +1,6 @@
 export type { ApiResponse, PaginatedResponse, ApiError } from './api'
 export type { User, AuthCredentials, RegisterPayload, AuthSession, UserProfile } from './user'
-export type { Destination, DestinationRegion } from './destination'
+export type { Destination, DestinationRegion, DestinationCategory } from './destination'
 export type { Review } from './review'
 export type { FeedPost, FeedPostType } from './feed'
 export type { Favorite } from './favorite'

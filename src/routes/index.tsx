@@ -1,6 +1,6 @@
 import { lazy, Suspense, type ComponentType } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import { LoadingSpinner } from '@/components'
+import { LoadingSpinner, ProtectedRoute } from '@/components'
 import { AdminLayout, AuthLayout, MainLayout } from '@/layouts'
 import { ROUTES } from './paths'
 
@@ -66,10 +66,10 @@ const router = createBrowserRouter([
       { path: ROUTES.reviews, element: withSuspense(ReviewsPage) },
       { path: ROUTES.feed, element: withSuspense(FeedPage) },
       { path: ROUTES.search, element: withSuspense(SearchPage) },
-      { path: ROUTES.favorites, element: withSuspense(FavoritesPage) },
-      { path: ROUTES.profile, element: withSuspense(ProfilePage) },
-      { path: '/profile/:username', element: withSuspense(ProfilePage) },
-      { path: ROUTES.profileEdit, element: withSuspense(EditProfilePage) },
+      { path: ROUTES.favorites, element: <ProtectedRoute>{withSuspense(FavoritesPage)}</ProtectedRoute> },
+      { path: ROUTES.profile, element: <ProtectedRoute>{withSuspense(ProfilePage)}</ProtectedRoute> },
+      { path: '/profile/:username', element: <ProtectedRoute>{withSuspense(ProfilePage)}</ProtectedRoute> },
+      { path: ROUTES.profileEdit, element: <ProtectedRoute>{withSuspense(EditProfilePage)}</ProtectedRoute> },
     ],
   },
   {
