@@ -1,0 +1,73 @@
+import type { User, UserProfile } from '@/types'
+
+export const mockUsers: User[] = [
+  {
+    id: 'user-1',
+    username: 'traveler_vn',
+    displayName: 'Nguyen Van A',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+    bio: 'Avid traveler exploring every corner of beautiful Vietnam.',
+    createdAt: '2026-01-15T08:00:00Z',
+  },
+  {
+    id: 'user-2',
+    username: 'vietnam_explorer',
+    displayName: 'Le Thi B',
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+    bio: 'Nature lover and photographer based in Da Nang.',
+    createdAt: '2026-02-20T10:30:00Z',
+  },
+  {
+    id: 'user-3',
+    username: 'city_wanderer',
+    displayName: 'Tran Minh C',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
+    bio: 'Coffee shop hopper and urban photographer in HCMC.',
+    createdAt: '2026-03-05T14:15:00Z',
+  },
+]
+
+export const mockUserProfiles: UserProfile[] = [
+  {
+    id: 'profile-1',
+    userId: 'user-1',
+    fullName: 'Nguyen Van A',
+    avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+    coverUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
+    bio: 'Avid traveler exploring every corner of beautiful Vietnam.',
+    website: 'https://nguyenvana.example.com',
+    location: 'Hanoi, Vietnam',
+    phoneNumber: '+84901234567',
+    createdAt: '2026-01-15T08:00:00Z',
+    followerCount: 124,
+    followingCount: 89,
+  },
+  {
+    id: 'profile-2',
+    userId: 'user-2',
+    fullName: 'Le Thi B',
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150',
+    coverUrl: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800',
+    bio: 'Nature lover and photographer based in Da Nang.',
+    website: 'https://lethib.example.com',
+    location: 'Da Nang, Vietnam',
+    phoneNumber: '+84987654321',
+    createdAt: '2026-02-20T10:30:00Z',
+    followerCount: 342,
+    followingCount: 156,
+  },
+  {
+    id: 'profile-3',
+    userId: 'user-3',
+    fullName: 'Tran Minh C',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150',
+    coverUrl: 'https://images.unsplash.com/photo-1583417319070-4a432dbff03e?w=800',
+    bio: 'Coffee shop hopper and urban photographer in HCMC.',
+    website: 'https://minhc.example.com',
+    location: 'Ho Chi Minh City, Vietnam',
+    phoneNumber: '+84912345678',
+    createdAt: '2026-03-05T14:15:00Z',
+    followerCount: 78,
+    followingCount: 110,
+  },
+]

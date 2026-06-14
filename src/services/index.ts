@@ -6,3 +6,10 @@ export { reviewsService } from './reviews.service'
 export { favoritesService } from './favorites.service'
 export { searchService } from './search.service'
 export type { SearchResults } from './search.service'
+
+// New scalable service layer exports
+export { destinationService } from './destinationService'
+export { provinceService } from './provinceService'
+export { reviewService } from './reviewService'
+export { favoriteService } from './favoriteService'
+export { userService } from './userService'

@@ -1,2 +1,5 @@
 export { provinces } from './provinces'
 export { destinations } from './destinations'
+export { mockUsers, mockUserProfiles } from './users'
+export { mockReviews } from './reviews'
+export { mockFavorites } from './favorites'
