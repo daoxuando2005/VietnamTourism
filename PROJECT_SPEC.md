@@ -1,7 +1,11 @@
 # VietnamTourism — Đặc tả hoàn thiện dự án
 
-- Phiên bản: 1.0.
+- Phiên bản: 1.4.
 - Ngày chốt cơ sở triển khai: 18/11/2026, múi giờ Asia/Saigon.
+- Ngày cập nhật lựa chọn công nghệ: 19/11/2026, múi giờ Asia/Saigon.
+- Ngày cập nhật đóng gói Docker: 20/11/2026, múi giờ Asia/Saigon.
+- Ngày lập kế hoạch triển khai: 20/11/2026; đầu việc, phụ thuộc, trạng thái và nghiệm thu theo [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md).
+- Cập nhật theo người dùng: backend Java + Quarkus, microservice, JPA/Hibernate; frontend React. Phương án backend Supabase/Edge Functions tại v1.1 đã được thay thế.
 - Trạng thái: người dùng duyệt tạm phương án và yêu cầu đưa kế hoạch lên Git; đây là yêu cầu cần thực hiện, không phải xác nhận tính năng đã hoàn thành.
 - Repository: https://github.com/daoxuando2005/VietnamTourism.
 - Mốc mã nguồn khảo sát: `4398844` — Complete social feed and profile module.
@@ -198,11 +202,11 @@ Chốt tên bảng/cột trong migration từng giai đoạn; không tạo bản
 
 ### TECH-01 — Stack và lớp dữ liệu
 
-- Giữ React, TypeScript, Tailwind, React Router, Supabase; không viết lại stack khác.
-- Luồng mục tiêu: trang/component → hook → service → repository → Supabase.
+- FE giữ React/TypeScript/Vite/Tailwind/React Router. BE theo yêu cầu mới: Java + Quarkus, microservice, JPA/Hibernate ORM cho dữ liệu quan hệ.
+- Luồng FE: trang/component → hook → API client → gateway → Quarkus service. Luồng BE: REST resource/DTO → application service → repository → database do service sở hữu.
 - Hợp nhất service cũ/mới, chuẩn hóa model/mapper; bỏ lớp thừa sau khi xác minh nơi dùng.
 - Bổ sung cache, phân trang, đồng bộ; tránh truy vấn thừa/tải toàn bộ danh sách không giới hạn.
-- Sinh TypeScript từ schema; không ép kiểu tùy tiện để che schema sai. Dependency mới phải phục vụ yêu cầu cụ thể, nêu mục đích, giữ lockfile nhất quán.
+- Sinh TypeScript client/types từ OpenAPI của BE; không đưa entity JPA trực tiếp thành hợp đồng API. Dependency mới phục vụ yêu cầu cụ thể; giữ lockfile FE và Quarkus BOM/Maven nhất quán.
 
 ### TECH-02 — Môi trường và migration
 
@@ -212,9 +216,43 @@ Chốt tên bảng/cột trong migration từng giai đoạn; không tạo bản
 - Kiểm tra trên database phát triển; push kế hoạch/mã không cho phép tự chạy migration production.
 - Cập nhật README/migration guide thành hướng dẫn thật, dùng đường dẫn tương đối trong repo.
 
+### TECH-03 — Công nghệ và ranh giới microservice
+
+Yêu cầu mới ngày 19/11/2026 thay thế kiến trúc backend tại v1.1. Chi tiết, phương án phân bổ database và lộ trình chuyển đổi ở [ADR-001](docs/architecture/ADR-001-backend-microservices.md). Java/Quarkus/microservice/JPA-Hibernate/React là yêu cầu người dùng; phân bổ PostgreSQL, MongoDB và Supabase là khuyến nghị kiến trúc được phân biệt rõ trong ADR.
+
+| Thành phần | Lựa chọn |
+| --- | --- |
+| FE | React + TypeScript + Vite, Tailwind, React Router, TanStack Query |
+| BE | Java + Quarkus, các service độc lập, REST/JSON và OpenAPI |
+| Persistence quan hệ | Jakarta Persistence (JPA) + Hibernate ORM, repository pattern/Panache, PostgreSQL JDBC, Flyway |
+| Database chính được khuyến nghị | PostgreSQL theo quyền sở hữu từng service; PostGIS cho địa điểm, unaccent/pg_trgm cho tìm kiếm |
+| Supabase được khuyến nghị | Auth và Storage; PostgreSQL hosting là lựa chọn hạ tầng nếu cần, không phải loại database thứ ba |
+| MongoDB | Chưa bắt buộc; cân nhắc cho mô hình đọc feed/tài liệu khi có nhu cầu và đo lường; dùng MongoDB Client/Panache, không dùng JPA/Hibernate ORM |
+| Hợp đồng và kiểu | OpenAPI của từng service, TypeScript client/types sinh từ API |
+
+- FE gọi API nghiệp vụ Quarkus. Auth SDK và tải ảnh có kiểm soát là ngoại lệ được thiết kế rõ, không cho phép bỏ qua API nghiệp vụ để ghi bảng trực tiếp.
+- Mỗi service sở hữu database/schema, tài khoản runtime, migration và transaction của mình. Không join bảng, dùng entity hoặc ghi trực tiếp database service khác.
+- Quarkus xác thực JWT và kiểm tra quyền/chủ sở hữu; kết nối JDBC không tự nhận danh tính Supabase `auth.uid()` từ JWT HTTP.
+- Giữ yêu cầu UX, địa lý/tìm kiếm và OPS-01; kiểm thử dấu tiếng Việt, tên thay thế và metadata của FE như trước. PostGIS không cung cấp ảnh nền hay tuyến đường giao thông.
+- Không triển khai MongoDB, broker hoặc thay đổi dữ liệu production chỉ vì cập nhật quyết định kiến trúc.
+
+### TECH-04 — Đóng gói độc lập bằng Docker
+
+- Theo yêu cầu ngày 20/11/2026, mỗi Quarkus service phải có Dockerfile, build target/context rõ, image và cấu hình runtime riêng; không gộp nhiều ứng dụng nghiệp vụ vào một container.
+- React và gateway có image/container riêng khi chạy stack đầy đủ. PostgreSQL chạy tách ứng dụng, dùng volume bền vững; database/schema/tài khoản vẫn tuân thủ quyền sở hữu service tại TECH-03.
+- Docker Compose quản lý môi trường phát triển và tích hợp. Chỉ public cổng FE/gateway cần thiết; service gọi nhau bằng tên DNS nội bộ, không dùng `localhost` để gọi container khác.
+- Dùng multi-stage build với Maven Wrapper cho Quarkus; chạy JVM trước, runtime chứa đầy đủ artifact cần thiết nhưng không chứa bộ công cụ build. Image runtime chạy non-root và không chứa secrets hay `.env` thật.
+- Có `.dockerignore`, cấu hình môi trường mẫu, health/readiness, timeout/retry kết nối phụ thuộc, giới hạn tài nguyên phù hợp và log ra stdout/stderr.
+- Image release có tag theo service/commit hoặc phiên bản, có thể xác định lại artifact để rollback; không dùng `latest` làm định danh duy nhất. Build/test service riêng khi thay đổi, tính cả dependency kỹ thuật liên quan.
+- Migration chạy qua bước/job có kiểm soát của service; không để mọi replica tự đồng thời thay schema. Rollback ứng dụng phải xét tương thích migration, không tự rollback/xóa dữ liệu.
+- Supabase Auth/Storage managed được dùng như dịch vụ bên ngoài; không tự dựng toàn bộ Supabase bằng Compose. MongoDB chỉ có trong cấu hình khi được chọn theo ADR-001.
+- Nghiệm thu: dựng stack phát triển từ hướng dẫn; build và thay image một service mà không rebuild ứng dụng khác; dữ liệu còn sau khi tạo lại container ứng dụng; kiểm tra mạng nội bộ, quyền runtime, readiness và xử lý lỗi phụ thuộc.
+- Chi tiết tại mục 6.1 của [ADR-001](docs/architecture/ADR-001-backend-microservices.md). Hiện mới là yêu cầu kiến trúc, chưa có Dockerfile/Compose triển khai vì backend chưa được tạo.
+
 ### SEC-01 — Phân quyền
 
-- RLS dùng `auth.uid()`/quyền được cấp cho thao tác tương ứng. Vai trò admin không lấy từ metadata người dùng tự sửa được.
+- Mỗi Quarkus service xác thực JWT, kiểm tra chủ sở hữu/vai trò và dùng tài khoản database ít quyền. Vai trò admin không lấy từ metadata người dùng tự sửa được.
+- JWT HTTP không tự thiết lập `auth.uid()` trong kết nối JPA/JDBC. RLS là lớp bổ sung được thiết kế/kiểm thử riêng; Auth/Storage hoặc Data API còn phơi ra vẫn phải có policy đúng và không cho đi vòng API nghiệp vụ.
 - Không thay quyền bằng ẩn nút/ProtectedRoute; tách hoặc giới hạn thông tin riêng khỏi nguồn đọc công khai.
 - Rà soát trigger, quyền thực thi, hàm `SECURITY DEFINER`, phạm vi thực thi; không tạo đường vòng vượt quyền.
 - Database có ràng buộc rating, chống trùng, khóa ngoại, đầu vào thiết yếu.
@@ -224,16 +262,18 @@ Chốt tên bảng/cột trong migration từng giai đoạn; không tạo bản
 
 - Tối ưu tải/bundle theo đo lường, không chỉ tăng ngưỡng để giấu cảnh báo.
 - Trang công khai có title, description, ảnh chia sẻ, sitemap, liên kết hợp lệ. Xác minh trình thu thập/chia sẻ đọc được metadata, không chỉ đổi title sau khi ứng dụng chạy.
-- CI chạy các kiểm tra đã thiết lập; kiểm thử hành vi thay vì chỉ phản chiếu triển khai.
+- CI kiểm tra FE và từng Quarkus service; kiểm thử hành vi, hợp đồng API, quyền và lỗi giữa service. Có health check, log/request ID xuyên service và cách triển khai độc lập.
 - Tài liệu thiết lập database, môi trường, build, triển khai, migration, khôi phục; thông tin truy cập dùng placeholder.
 
 ## 8. Thứ tự thực hiện
 
 P0 → P1 → P2 → P3 → P4 là trình tự mặc định bắt buộc. Hoàn thành cần bằng chứng nghiệm thu, không chỉ có file/giao diện.
 
+Đầu việc thực thi nằm trong [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md): 42 công việc có mã, đầu ra, phụ thuộc và trạng thái. Đọc kế hoạch trước khi nhận việc; các bảng dưới là mốc tổng quát, không thay bảng theo dõi. Công việc đầu tiên khi triển khai là P0-01.
+
 | Giai đoạn | Phạm vi | Điều kiện kết thúc |
 | --- | --- | --- |
-| P0 — Nền tảng | SEC-01, TECH-01/02 phần nền, AUTH-01, chặn admin, hạ tầng kiểm thử quyền | Chặn ghi trái quyền; phiên đúng; migration phát triển kiểm tra được; cài đặt tái lập |
+| P0 — Nền tảng | TECH-01/02/03/04, SEC-01, khung Quarkus/gateway, Docker/Compose, JWT, profile-service/AUTH-01, ownership database/migration và hạ tầng kiểm thử | Chặn ghi trái quyền/đường vòng Data API; phiên đúng; chạy stack container phát triển tái lập, có luồng React → API → JPA → PostgreSQL và migration kiểm tra được |
 | P1 — Khám phá | HOME-01, DISC-01, DEST-01, MAP-01, tìm địa điểm/tỉnh, DATA-01/02, UX, lưu cơ bản SAVE-01 | Tìm → xem → lưu với dữ liệu thật; tên cũ/mới và URL đúng |
 | P2 — Tài khoản/trải nghiệm | PROFILE-01, SAVE-01 đầy đủ, REVIEW-01, tải ảnh, báo cáo, ADMIN-01 nội dung | Lưu bền vững, riêng tư và kiểm duyệt đúng; thống kê đồng bộ |
 | P3 — Lịch trình/cộng đồng | TRIP-01, SOCIAL-01, tìm bài/người, trang chủ lịch trình/trải nghiệm đầy đủ | Chuyến đi xuyên suốt; chia sẻ, bài viết, bình luận, theo dõi đúng quyền |
@@ -246,7 +286,8 @@ Việc chuẩn bị nội dung/tài liệu độc lập được làm sớm. Ph�
 Kiểm tra theo hành vi/rủi ro:
 
 - Unit/integration: tìm kiếm, tính điểm/chi phí, ràng buộc, mapper/logic có nhánh cần xác minh.
-- Database/RLS: ma trận khách/A/B/admin; đọc/ghi/xóa, công khai/riêng tư; cả trường hợp bị từ chối.
+- API/database/quyền Storage: ma trận khách/A/B/admin; đọc/ghi/xóa, công khai/riêng tư, service account; cả trường hợp bị từ chối và truy cập vòng qua Data API/JDBC.
+- Microservice: hợp đồng API, timeout/retry, lỗi service phụ thuộc và dữ liệu đọc tổng hợp; kiểm thử outbox/idempotency/replay nếu thêm luồng sự kiện.
 - Xuyên suốt: xác thực, tìm kiếm, lưu, đánh giá, sửa hồ sơ, lịch trình, chia sẻ, quản trị.
 - UI: responsive, bàn phím, form, trạng thái dữ liệu, giảm chuyển động.
 - Vận hành: clean install, build, lint, kiểm thử, migration phát triển, đường dẫn trực tiếp, metadata.
@@ -277,6 +318,7 @@ Báo cáo tác vụ phải nêu mã yêu cầu, thay đổi, lệnh/kịch bản
 ## 11. Quản lý tài liệu và thay đổi
 
 - `PROJECT_SPEC.md`: đặc tả đầy đủ, giữ mã yêu cầu ổn định khi chỉnh nội dung.
+- `IMPLEMENTATION_PLAN.md`: công việc P0–P4, phụ thuộc, trạng thái, đầu ra và bằng chứng kiểm tra; không tự thay thế yêu cầu sản phẩm/kiến trúc.
 - `AGENTS.md`: chỉ dẫn agent thực hiện/kiểm tra/báo cáo theo đặc tả.
 - `PROJECT_RULES.md`: tóm tắt, dẫn về đặc tả; không duy trì yêu cầu mâu thuẫn.
 - Người dùng đổi phạm vi: cập nhật phiên bản/ngày, nội dung và tiêu chí bị ảnh hưởng; không tự bỏ yêu cầu.
@@ -285,9 +327,19 @@ Báo cáo tác vụ phải nêu mã yêu cầu, thay đổi, lệnh/kịch bản
 | Phiên bản | Ngày | Thay đổi |
 | --- | --- | --- |
 | 1.0 | 18/11/2026 | Ghi phương án duyệt tạm; mã yêu cầu, trình tự, tiêu chí và chỉ dẫn cho các lần triển khai tiếp theo. |
+| 1.1 | 19/11/2026 | Chọn FE React/TypeScript/Vite, BE Supabase/Edge Functions TypeScript, database PostgreSQL; làm rõ cache, địa lý, tìm kiếm và ranh giới xử lý tại TECH-03. |
+| 1.2 | 19/11/2026 | Theo yêu cầu người dùng: thay backend bằng Java/Quarkus microservice và JPA/Hibernate, giữ React. Thay TECH-03 và đồng bộ quy định; ADR-001 đề xuất PostgreSQL chính, Supabase Auth/Storage, MongoDB tùy nhu cầu. Backend tại v1.1 đã được thay thế. |
+| 1.3 | 20/11/2026 | Bổ sung Docker đóng gói độc lập từng service, Compose phát triển, quy tắc image/runtime/migration và tiêu chí kiểm chứng tại TECH-04, ADR-001 mục 6.1. |
+| 1.4 | 20/11/2026 | Thêm IMPLEMENTATION_PLAN với 42 công việc P0–P4, chuyển dữ liệu/API cũ, ma trận yêu cầu, kiểm thử, điều kiện nghiệm thu và ước lượng theo năng lực giả định. |
 
 ## 12. Nguồn tham chiếu
 
 - [Repository gốc](https://github.com/daoxuando2005/VietnamTourism).
 - [Supabase: Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security).
+- [ADR-001: Java/Quarkus microservice và dữ liệu](docs/architecture/ADR-001-backend-microservices.md).
+- [Quarkus Hibernate ORM/Panache](https://quarkus.io/guides/hibernate-orm-panache), [MongoDB Panache](https://quarkus.io/guides/mongodb-panache), [JWT](https://quarkus.io/guides/security-jwt), [Flyway](https://quarkus.io/guides/flyway).
+- [Quarkus container image](https://quarkus.io/guides/container-image), [Docker Compose](https://docs.docker.com/compose/intro/features-uses/), [multi-stage build](https://docs.docker.com/build/building/multi-stage/).
+- [Supabase: PostgreSQL](https://supabase.com/docs/guides/database/overview), [kết nối database](https://supabase.com/docs/guides/database/connecting-to-postgres), [JWT](https://supabase.com/docs/guides/auth/jwts), [PostGIS](https://supabase.com/docs/guides/database/extensions/postgis).
+- [TanStack Query: quản lý dữ liệu phía React](https://tanstack.com/query/latest/docs/framework/react/overview).
+- [PostgreSQL: pg_trgm](https://www.postgresql.org/docs/current/pgtrgm.html), [unaccent](https://www.postgresql.org/docs/current/unaccent.html) — đối chiếu tài liệu theo phiên bản database thực tế khi triển khai.
 - [Cổng thông tin Chính phủ: Nghị quyết sắp xếp đơn vị hành chính cấp tỉnh](https://baochinhphu.vn/nghi-quyet-cua-quoc-hoi-ve-sap-xep-don-vi-hanh-chinh-cap-tinh-102250612191145158.htm) — cơ sở 34 tỉnh/thành; xác minh lại khi làm DATA-01.

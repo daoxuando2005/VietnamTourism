@@ -3,14 +3,21 @@
 Phương án được người dùng duyệt tạm ngày 18/11/2026 làm cơ sở triển khai.
 
 - Đọc [đặc tả đầy đủ](PROJECT_SPEC.md) trước khi triển khai; đây là nguồn yêu cầu sản phẩm chính.
+- Thực hiện theo [kế hoạch triển khai](IMPLEMENTATION_PLAN.md): 42 công việc P0–P4, phụ thuộc và nghiệm thu; bắt đầu P0-01, cập nhật trạng thái theo bằng chứng thực tế.
 - Agent phải theo [AGENTS.md](AGENTS.md) khi thay đổi repository và báo cáo nghiệm thu.
 - File này chỉ tóm tắt, không thay thế đặc tả hoặc xác nhận chức năng đã hoàn thành.
 
 ## Công nghệ và cấu trúc
 
-- React, TypeScript, Tailwind CSS, React Router, Supabase.
+- FE: React, TypeScript, Vite, Tailwind CSS, React Router; TanStack Query cho cache và đồng bộ dữ liệu.
+- BE: Java + Quarkus theo microservice; JPA/Hibernate ORM, PostgreSQL JDBC, Flyway, REST/JSON, OpenAPI. Thay thế phương án Edge Functions làm backend nghiệp vụ.
+- Docker: Dockerfile/image riêng cho từng service; React và gateway đóng gói riêng. Docker Compose cho phát triển/tích hợp; cấu hình, health/readiness, migration và volume theo TECH-04 (20/11/2026).
+- Database: khuyến nghị PostgreSQL theo từng service; PostGIS cho địa lý, unaccent/pg_trgm và tên thay thế cho tìm kiếm. MongoDB chỉ cân nhắc cho mô hình đọc feed/tài liệu khi có nhu cầu, dùng MongoDB Client/Panache.
+- Supabase: khuyến nghị cho Auth/Storage; nếu dùng hosting database thì vẫn là PostgreSQL. Không coi Supabase là một loại database thứ ba.
+- Quyết định công nghệ ngày 19/11/2026 và ranh giới FE/BE/database nằm tại TECH-03 trong đặc tả.
 - Mobile first, responsive, component tái sử dụng, khả năng tiếp cận.
-- Luồng mục tiêu: trang/component → hook → service → repository → Supabase.
+- Luồng mục tiêu: FE → gateway → Quarkus REST resource → application service → repository → database riêng. FE types sinh từ OpenAPI.
+- Chi tiết phân chia service, sở hữu dữ liệu và chuyển đổi tại [ADR-001](docs/architecture/ADR-001-backend-microservices.md).
 - Chuẩn hóa service, types, cache, phân trang, xử lý lỗi theo từng module.
 
 ## Phạm vi sản phẩm
