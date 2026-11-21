@@ -22,3 +22,14 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local configuration and verification tools (never commit credentials/dumps)
+.env
+.env.*
+!.env.example
+.tools/
+**/target/
+backups/
+*.dump
+*.dump.sql
+test-results/

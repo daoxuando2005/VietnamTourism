@@ -75,7 +75,7 @@ export const favoriteRepository = {
   async getFavoritesByUser(userId: string): Promise<Favorite[]> {
     const { data, error } = await supabase
       .from('favorites')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
@@ -86,7 +86,7 @@ export const favoriteRepository = {
   async getAllFavorites(): Promise<Favorite[]> {
     const { data, error } = await supabase
       .from('favorites')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .order('created_at', { ascending: false })
 
     if (error || !data) return []
@@ -112,7 +112,7 @@ export const favoriteRepository = {
     // Retrieve hydrated record
     const { data: inserted, error: fetchError } = await supabase
       .from('favorites')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .eq('id', newId)
       .single()
 

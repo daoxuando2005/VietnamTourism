@@ -91,7 +91,7 @@ export const reviewRepository = {
   async getAllReviews(): Promise<Review[]> {
     const { data, error } = await supabase
       .from('reviews')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .order('created_at', { ascending: false })
 
     if (error || !data) return []
@@ -101,7 +101,7 @@ export const reviewRepository = {
   async getReviewsByDestination(destinationId: string): Promise<Review[]> {
     const { data, error } = await supabase
       .from('reviews')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .eq('destination_id', destinationId)
       .order('created_at', { ascending: false })
 
@@ -112,7 +112,7 @@ export const reviewRepository = {
   async getReviewsByUser(userId: string): Promise<Review[]> {
     const { data, error } = await supabase
       .from('reviews')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
 
@@ -148,7 +148,7 @@ export const reviewRepository = {
     // Retrieve full hydrated record
     const { data: inserted, error: fetchError } = await supabase
       .from('reviews')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .eq('id', newId)
       .single()
 
@@ -178,7 +178,7 @@ export const reviewRepository = {
     // Retrieve updated hydrated record
     const { data: updated, error: fetchError } = await supabase
       .from('reviews')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .eq('id', id)
       .single()
 

@@ -58,5 +58,6 @@ Cập nhật trạng thái công việc trong `IMPLEMENTATION_PLAN.md` khi tri�
 ## Git và phát hành
 
 - Chỉ stage file thuộc tác vụ; không đưa file môi trường, dependency cài đặt hoặc build output vào commit.
+- Theo yêu cầu người dùng: sau mỗi đầu việc đã kiểm chứng, commit mã/cấu hình/tài liệu và bản ghi nghiệm thu tương ứng. Phần còn chờ điều kiện phải ghi rõ, không mô tả trong commit như đã nghiệm thu đầy đủ.
 - Không force push, ghi đè lịch sử hoặc xóa dữ liệu để giải quyết xung đột.
 - Commit/push/deploy theo phạm vi người dùng cho phép. Push kế hoạch/mã không đồng nghĩa với cho phép migrate hay deploy production.

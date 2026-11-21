@@ -8,7 +8,7 @@ export const feedService = {
   async getFeed(): Promise<FeedActivity[]> {
     const { data, error } = await supabase
       .from('feed_activities')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .order('created_at', { ascending: false })
 
     if (error || !data) return []
@@ -60,7 +60,7 @@ export const feedService = {
   async getUserFeed(userId: string): Promise<FeedActivity[]> {
     const { data, error } = await supabase
       .from('feed_activities')
-      .select('*, profiles(*), destinations(*, provinces(name, region))')
+      .select('*, profiles(id,username,display_name,avatar_url,bio,created_at), destinations(*, provinces(name, region))')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
 

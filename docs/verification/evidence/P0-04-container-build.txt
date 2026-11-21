@@ -1,0 +1,36 @@
+#24 147.0 [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-io/3.6.0/plexus-io-3.6.0.jar (80 kB at 511 kB/s)
+#24 147.2 [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/commons/commons-lang3/3.18.0/commons-lang3-3.18.0.jar (703 kB at 2.0 MB/s)
+#24 147.3 [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/apache/maven/maven-archiver/3.6.6/maven-archiver-3.6.6.jar (28 kB at 68 kB/s)
+#24 147.7 [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/com/github/luben/zstd-jni/1.5.7-9/zstd-jni-1.5.7-9.jar (7.6 MB at 8.9 MB/s)
+#24 150.6 [INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-archiver/4.12.0/plexus-archiver-4.12.0.jar (227 kB at 60 kB/s)
+#24 150.8 [INFO] Building jar: /build/target/profile-service-0.1.0-SNAPSHOT.jar
+#24 150.8 [INFO]
+#24 150.8 [INFO] --- quarkus:3.40.1.2:build (default) @ profile-service ---
+#24 154.3 [INFO] [io.quarkus.deployment.QuarkusAugmentor] Quarkus augmentation completed in 3408ms
+#24 154.3 [INFO] ------------------------------------------------------------------------
+#24 154.3 [INFO] BUILD SUCCESS
+#24 154.3 [INFO] ------------------------------------------------------------------------
+#24 154.3 [INFO] Total time:  02:30 min
+#24 154.3 [INFO] Finished at: 2026-11-21T14:39:41Z
+#24 154.3 [INFO] ------------------------------------------------------------------------
+#24 DONE 154.4s
+
+#25 [profile-service stage-1 4/4] COPY --from=build --chown=app:app /build/target/quarkus-app/ ./
+#25 DONE 0.1s
+
+#26 [profile-service] exporting to image
+#26 exporting layers
+#26 exporting layers 1.3s done
+#26 exporting manifest sha256:2f5ede96a086fc44a79f500ec3b1537551b9848c1d014099f03883abb60b3a97 0.0s done
+#26 exporting config sha256:fa30d53f23b0a9e9aef785d07d0aa98cbbd863321c308f311380341e9eb60261 0.0s done
+#26 exporting attestation manifest sha256:445a23841d49eb837729b5d4afcec0d6eb3dde7576b4b38db761958e6e8d7dee 0.0s done
+#26 exporting manifest list sha256:5379aa540c4aa6734aa7d6fb7fa9cfdaa64d4e991a0c3d752d727b905168e90a 0.0s done
+#26 naming to docker.io/vietnamtourism/profile-service:p0-04 done
+#26 unpacking to docker.io/vietnamtourism/profile-service:p0-04
+#26 unpacking to docker.io/vietnamtourism/profile-service:p0-04 0.3s done
+#26 DONE 1.7s
+
+#27 [profile-service] resolving provenance for metadata file
+#27 DONE 0.0s
+ Image vietnamtourism/gateway:p0-04 Built
+ Image vietnamtourism/profile-service:p0-04 Built

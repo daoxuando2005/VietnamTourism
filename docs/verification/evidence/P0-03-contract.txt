@@ -1,0 +1,5 @@
+
+> vietnamtourism@0.0.0 check:contract
+> node scripts/check-contract.mjs
+
+PASS: OpenAPI 3.0 validation, public field boundary, public route security declaration

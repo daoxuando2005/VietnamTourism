@@ -1,0 +1,48 @@
+{
+  "date": "2026-11-21",
+  "mode": "read-only public HEAD counts; no private records or DDL access",
+  "results": [
+    {
+      "table": "provinces",
+      "status": "connection-failed",
+      "visibleCount": null,
+      "reason": "ENOTFOUND"
+    },
+    {
+      "table": "profiles",
+      "status": "connection-failed",
+      "visibleCount": null,
+      "reason": "ENOTFOUND"
+    },
+    {
+      "table": "destinations",
+      "status": "connection-failed",
+      "visibleCount": null,
+      "reason": "ENOTFOUND"
+    },
+    {
+      "table": "reviews",
+      "status": "connection-failed",
+      "visibleCount": null,
+      "reason": "ENOTFOUND"
+    },
+    {
+      "table": "favorites",
+      "status": "connection-failed",
+      "visibleCount": null,
+      "reason": "ENOTFOUND"
+    },
+    {
+      "table": "feed_activities",
+      "status": "connection-failed",
+      "visibleCount": null,
+      "reason": "ENOTFOUND"
+    }
+  ],
+  "signing": {
+    "status": "connection-failed",
+    "algorithms": [],
+    "reason": "ENOTFOUND"
+  },
+  "limitation": "Anon-visible counts are not owner inventory or proof of deployed RLS, trigger definitions, grants, backups or Auth E2E."
+}

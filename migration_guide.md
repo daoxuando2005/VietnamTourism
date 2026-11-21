@@ -1,68 +1,17 @@
-# Supabase Database & Auth Migration Guide
+# Migration dữ liệu và Auth
 
-This guide describes how to set up the Supabase backend for the Vietnam Tourism Platform. The application has been migrated from mock storage to a live Supabase implementation utilizing repositories, Supabase Auth, Row-Level Security (RLS) policies, and automatic database triggers.
+Kiến trúc nghiệp vụ mới là Java/Quarkus/JPA/PostgreSQL, giữ Supabase Auth/Storage theo [ADR-001](docs/architecture/ADR-001-backend-microservices.md). Một số miền FE cũ vẫn dùng Data API trong thời gian chuyển tiếp.
 
----
+**Không dùng `supabase/schema.sql` để thiết lập database.** Entry point chỉ còn guard từ chối; toàn bộ reset/seed cũ lưu dưới dạng [plain text archive](supabase/archive/legacy-demo.sql.txt), không phải migration production.
 
-## Prerequisites
+Thực hiện theo:
 
-1. Create a free project on [Supabase](https://supabase.com).
-2. Retrieve your project's **API URL** and **Anon Key** from the Supabase dashboard (**Project Settings > API**).
+1. [Chuẩn bị toolchain/môi trường, Auth và Storage](docs/operations/DEVELOPMENT.md).
+2. [Kiểm kê schema/query/trigger, mock/thật và quyền riêng tư](docs/operations/LEGACY_INVENTORY.md).
+3. [Runbook export, restore, migration quyền và khôi phục](docs/operations/LEGACY_MIGRATION.md).
+4. [SQL inventory chỉ đọc](supabase/inventory.sql) và [migration có phiên bản](supabase/migrations/202611210001_legacy_access_hardening.sql).
+5. [Bằng chứng và giới hạn P0-02](docs/verification/P0-02.md).
 
----
+Migration chuyển tiếp giữ dữ liệu, hạn chế ghi theo chủ sở hữu, tách liên hệ private, giấu favorite khỏi feed và khóa quyền function. Nó không tự tạo database/JWT của profile-service mới (P0-05/06), không đóng Data API của toàn project và không chứng minh môi trường hosted đã áp dụng.
 
-## Step 1: Initialize Database Tables & Seed Data
-
-Navigate to the **SQL Editor** in your Supabase dashboard, paste the contents of [supabase/schema.sql](file:///d:/Projects/VietnamTourism/supabase/schema.sql) and click **Run**.
-
-This SQL script will:
-1. Create tables for `provinces`, `profiles`, `destinations`, `reviews`, `favorites`, and `feed_activities`.
-2. Seed the database with all 63 provinces, 20 destinations, and mock profiles, reviews, and favorites.
-
----
-
-## Step 2: Automatic Activity Tracking Triggers
-
-The SQL schema contains automated PostgreSQL triggers that populate the `feed_activities` table in real time:
-
-- **Auth Triggers**: `on_auth_user_created` trigger automatically maps a new signup from `auth.users` into `public.profiles`.
-- **Review Triggers**: `on_review_changed` creates, updates, or deletes records in `feed_activities` automatically on changes to `reviews`.
-- **Favorite Triggers**: `on_favorite_changed` creates or deletes records in `feed_activities` automatically on changes to `favorites`.
-
-This shifts activity timeline aggregation to the database level, ensuring data integrity and high performance.
-
----
-
-## Step 3: Configure Environment Variables
-
-Update the [.env](file:///d:/Projects/VietnamTourism/.env) file in your project root with your Supabase credentials:
-
-```env
-VITE_SUPABASE_URL=https://your-project-id.supabase.co
-VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
-```
-
----
-
-## Step 4: Row-Level Security (RLS) Policies
-
-All tables are protected by Row-Level Security (RLS) in Supabase. The configurations are:
-
-- **Provinces & Destinations**: Public read-only access.
-- **Profiles**: Public read-only access. Users can only update or insert their own profiles (`auth.uid() = id`).
-- **Reviews**: Public read-only access. Users can insert, update, or delete only their own reviews (`auth.uid() = user_id`).
-- **Favorites**: Users can insert, update, or delete only their own favorites (`auth.uid() = user_id`).
-- **Feed Activities**: Public read-only access (computed automatically by server-side triggers).
-
----
-
-## Step 5: Verification
-
-1. Start the local server:
-   ```bash
-   npm run dev
-   ```
-2. Navigate to the **Sign Up** page and register a new traveler profile.
-3. Verify that your traveler profile is created in your Supabase database under `public.profiles`.
-4. Browse destinations, add some to your favorites (heart toggle), and write reviews on destination pages.
-5. Visit the **Social Feed** page and **Profile** page to confirm that the activities and reviews are rendered dynamically from Supabase.
+`npm run test:legacy-db` kiểm PostgreSQL fixture, ownership/RLS, trigger và backup/restore cách ly. Chỉ áp dụng vào môi trường thật được phép sau khi inventory/schema drift, backup/restore, SDK/PostgREST và JWT A/B đã được kiểm chứng. Không tự khôi phục policy rộng hoặc xóa dữ liệu để chữa lỗi.

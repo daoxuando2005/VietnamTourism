@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import type { User, RegisterPayload } from '@/types'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { PUBLIC_PROFILE_FIELDS } from '@/repositories/profileFields'
 
 // Helper function to query/create profiles for mapped auth users
 async function ensureUserProfile(supabaseUser: SupabaseUser): Promise<User> {
@@ -12,7 +13,7 @@ async function ensureUserProfile(supabaseUser: SupabaseUser): Promise<User> {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select(PUBLIC_PROFILE_FIELDS)
     .eq('id', userId)
     .single()
 
@@ -40,7 +41,7 @@ async function ensureUserProfile(supabaseUser: SupabaseUser): Promise<User> {
   const { data: inserted } = await supabase
     .from('profiles')
     .insert(newProfile)
-    .select()
+    .select(PUBLIC_PROFILE_FIELDS)
     .single()
 
   if (inserted) {

@@ -1,0 +1,20 @@
+# P0-04 infrastructure only. Full FE/PostgreSQL stack is P0-05/P0-08.
+services:
+  profile-service:
+    image: vietnamtourism/profile-service:p0-04
+    build:
+      context: ../../services/profile-service
+    environment:
+      PROFILE_PERSISTENCE_ENABLED: 'false'
+    mem_limit: 512m
+    cpus: 1.0
+  gateway:
+    image: vietnamtourism/gateway:p0-04
+    build:
+      context: .
+    ports:
+      - '127.0.0.1:8080:8080'
+    depends_on:
+      - profile-service
+    mem_limit: 128m
+    cpus: 0.5

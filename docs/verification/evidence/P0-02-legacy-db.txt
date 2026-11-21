@@ -1,0 +1,400 @@
+$ docker run -d --rm --name vt-p0-legacy-30016 --tmpfs /var/lib/postgresql/data -e POSTGRES_PASSWORD=local-test-only postgres:17.12-alpine
+cdd319348ab3dc239d16d8bca4382410a5187d8d168a94996e3f29c8dcfb30f7
+
+$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+CREATE ROLE
+CREATE ROLE
+CREATE SCHEMA
+GRANT
+CREATE TABLE
+CREATE FUNCTION
+CREATE TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE TABLE
+ALTER TABLE
+CREATE POLICY
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE FUNCTION
+CREATE TRIGGER
+CREATE FUNCTION
+CREATE TRIGGER
+GRANT
+GRANT
+
+$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+BEGIN
+SET
+SET
+CREATE TABLE
+INSERT 0 0
+DO
+DO
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+COMMIT
+
+$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+CREATE SCHEMA
+GRANT
+CREATE FUNCTION
+CREATE FUNCTION
+GRANT
+INSERT 0 1
+INSERT 0 1
+INSERT 0 2
+ assert
+--------
+
+(1 row)
+
+UPDATE 1
+SET
+ assert
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+RESET
+SET
+              set_config
+--------------------------------------
+ 00000000-0000-4000-8000-000000000001
+(1 row)
+
+INSERT 0 1
+INSERT 0 1
+UPDATE 1
+INSERT 0 1
+UPDATE 1
+ assert
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ denied
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+              set_config
+--------------------------------------
+ 00000000-0000-4000-8000-000000000002
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+ set_config
+------------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+              set_config
+--------------------------------------
+ 00000000-0000-4000-8000-000000000001
+(1 row)
+
+UPDATE 1
+ assert
+--------
+
+(1 row)
+
+DELETE 1
+ assert
+--------
+
+(1 row)
+
+DELETE 1
+ assert
+--------
+
+(1 row)
+
+RESET
+INSERT 0 1
+SET
+ assert
+--------
+
+(1 row)
+
+RESET
+NOTICE:  PASS: duplicate signup username has safe fallback
+NOTICE:  PASS: guest reads public profile rows
+NOTICE:  PASS: guest cannot read private legacy column
+NOTICE:  PASS: wildcard private profile projection denied
+NOTICE:  PASS: guest cannot read private table
+NOTICE:  PASS: guest cannot read favorites
+NOTICE:  PASS: guest write denied
+NOTICE:  PASS: A reads only own private profile
+NOTICE:  PASS: A cannot forge favorite owner
+NOTICE:  PASS: A cannot forge review owner
+NOTICE:  PASS: A cannot write B private profile
+NOTICE:  PASS: client cannot spoof authoritative counters
+NOTICE:  PASS: cannot transfer review ownership
+NOTICE:  PASS: authenticated cannot read legacy private column
+NOTICE:  PASS: metadata role admin does not grant content write
+NOTICE:  PASS: cannot directly forge feed
+NOTICE:  PASS: trigger function has no API EXECUTE grant
+NOTICE:  PASS: review trigger works and favorite never publishes
+NOTICE:  PASS: B cannot read A favorites
+NOTICE:  PASS: B cannot update A review
+NOTICE:  PASS: B cannot delete A review
+NOTICE:  PASS: B cannot delete A favorite
+NOTICE:  PASS: B cannot edit A public profile
+NOTICE:  PASS: B cannot edit A private profile
+NOTICE:  PASS: missing subject fails closed
+NOTICE:  PASS: missing subject cannot read favorites
+NOTICE:  PASS: owner update synchronizes review feed
+NOTICE:  PASS: owner deletion removes review activity
+NOTICE:  PASS: owner can remove favorite
+NOTICE:  PASS: existing favorite activities remain private
+
+$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+BEGIN
+SET
+SET
+CREATE TABLE
+INSERT 0 1
+DO
+DO
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+COMMIT
+NOTICE:  relation "profiles_private" already exists, skipping
+
+$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+NOTICE:  PASS: legacy contact values preserved
+NOTICE:  PASS: migration preserves existing private feed rows
+
+$ docker exec vt-p0-legacy-30016 pg_dump -U postgres -Fc -f /tmp/legacy.dump postgres
+
+$ docker exec vt-p0-legacy-30016 createdb -U postgres restored
+
+$ docker exec vt-p0-legacy-30016 pg_restore -U postgres -d restored --exit-on-error /tmp/legacy.dump
+
+$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d restored
+ assert
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+SET
+ denied
+--------
+
+(1 row)
+
+ assert
+--------
+
+(1 row)
+
+RESET
+NOTICE:  PASS: restore profile row counts
+NOTICE:  PASS: restore private data row counts
+NOTICE:  PASS: restored column protection
+NOTICE:  PASS: restored privacy policies
+
+Cleanup test container: OK

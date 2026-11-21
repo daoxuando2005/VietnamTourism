@@ -1,0 +1,42 @@
+Repository baseline: ff76724 (initial working tree clean)
+Verification date: 2026-11-21 Asia/Saigon
+Node portable (official SHA256 verified):
+v24.22.3
+11.19.1
+java version "21.0.8" 2025-07-15 LTS
+Java(TM) SE Runtime Environment (build 21.0.8+12-LTS-250)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0.8+12-LTS-250, mixed mode, sharing)
+git version 2.51.0.windows.1
+Client:
+ Version:           29.4.2
+ API version:       1.54
+ Go version:        go1.26.2
+ Git commit:        055a478
+ Built:             Fri May  1 01:27:10 2026
+ OS/Arch:           windows/amd64
+ Context:           desktop-linux
+
+Server: Docker Desktop 4.72.0 (225998)
+ Engine:
+  Version:          29.4.2
+  API version:      1.54 (minimum version 1.40)
+  Go version:       go1.26.2
+  Git commit:       d329809
+  Built:            Fri May  1 01:24:36 2026
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          v2.2.3
+  GitCommit:        77c84241c7cbdd9b4eca2591793e3d4f4317c590
+ runc:
+  Version:          1.3.5
+  GitCommit:        v1.3.5-0-g488fc13e
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
+Docker Compose version v5.1.3
+Apache Maven 3.10.1 (3afd8084b5629f80b97750906a719879ed4cd283)
+Maven home: C:\Users\ASUS\.m2\wrapper\dists\apache-maven-3.10.1\0533dd77e4cdfed563aa13aebe806065f2920a12f2ab9be1d5ecae2042eae982
+Java version: 21.0.8, vendor: Oracle Corporation, runtime: D:\Programs\Java\jdk-21
+Default locale: en_US, platform encoding: UTF-8, time zone: Asia/Saigon
+OS name: "windows 11", version: "10.0", arch: "amd64", family: "windows"

@@ -5,7 +5,7 @@ Phiên bản 1.0, ngày 20/11/2026 (Asia/Saigon). Mục tiêu là hoàn thành h
 - Yêu cầu sản phẩm: [PROJECT_SPEC.md](PROJECT_SPEC.md), phiên bản 1.4.
 - Quyết định kiến trúc: [ADR-001](docs/architecture/ADR-001-backend-microservices.md).
 - Quy định thực hiện và báo cáo: [AGENTS.md](AGENTS.md).
-- Trạng thái khởi đầu: đã có frontend React tích hợp Supabase; chưa tạo backend Java, Dockerfile, Compose hoặc bộ kiểm thử cho kiến trúc mới. Mọi công việc trong bảng dưới đang **Chưa bắt đầu**.
+- Trạng thái cập nhật 21/11/2026: P0-01…04 đang được triển khai; xem trạng thái từng dòng và [bản ghi nghiệm thu](docs/verification/README.md). P0-02 còn chờ kiểm chứng Supabase thật; không coi toàn P0 đã hoàn thành.
 
 Đặc tả quyết định hành vi và nghiệm thu; ADR quyết định kiến trúc; kế hoạch này quyết định đầu việc, phụ thuộc và bằng chứng tiến độ. Không đổi phạm vi sản phẩm bằng cách chỉ sửa bảng công việc.
 
@@ -91,10 +91,10 @@ Tham chiếu TECH-01 đến TECH-04, SEC-01, AUTH-01 và PROFILE-01 phần đọ
 
 | Mã | Công việc và đầu ra cần kiểm tra | Phụ thuộc | Trạng thái |
 | --- | --- | --- | --- |
-| P0-01 | Kiểm tra Git/toolchain, Docker Engine, Node, JDK/Maven; khóa phiên bản tương thích trong cấu hình/Wrapper và CI. Có `.env.example`, phân biệt local/staging/production, hướng dẫn chuẩn bị Auth/Storage. | Không | Chưa bắt đầu |
-| P0-02 | Kiểm kê dữ liệu/query/trigger Supabase; phân loại mock/thật, công khai/riêng; lập phương án export/restore. Chuẩn bị và kiểm thử migration sửa policy quyền yếu của các miền còn phục vụ FE cũ, giữ quyền hợp lệ trong lúc chuyển đổi; áp dụng vào môi trường được phép theo runbook, không chạy script DROP. | P0-01 | Chưa bắt đầu |
-| P0-03 | Chốt API v1, ID/slug, pagination, filter/sort, định dạng lỗi/request ID, timestamp UTC và chi phí VND; xác định vai trò, chủ sở hữu và hợp đồng gọi giữa service. Có OpenAPI ban đầu và quy tắc thay đổi tương thích. | P0-02 | Chưa bắt đầu |
-| P0-04 | Tạo profile-service Quarkus và gateway; resource/DTO/application service/repository tách rõ. Có health/readiness, log và timeout; service build/test độc lập. | P0-03 | Chưa bắt đầu |
+| P0-01 | Kiểm tra Git/toolchain, Docker Engine, Node, JDK/Maven; khóa phiên bản tương thích trong cấu hình/Wrapper và CI. Có `.env.example`, phân biệt local/staging/production, hướng dẫn chuẩn bị Auth/Storage. | Không | Hoàn thành — [bản ghi và giới hạn](docs/verification/P0-01.md) |
+| P0-02 | Kiểm kê dữ liệu/query/trigger Supabase; phân loại mock/thật, công khai/riêng; lập phương án export/restore. Chuẩn bị và kiểm thử migration sửa policy quyền yếu của các miền còn phục vụ FE cũ, giữ quyền hợp lệ trong lúc chuyển đổi; áp dụng vào môi trường được phép theo runbook, không chạy script DROP. | P0-01 | Chờ điều kiện — local đạt; thiếu inventory/migration Supabase thật, [bản ghi](docs/verification/P0-02.md) |
+| P0-03 | Chốt API v1, ID/slug, pagination, filter/sort, định dạng lỗi/request ID, timestamp UTC và chi phí VND; xác định vai trò, chủ sở hữu và hợp đồng gọi giữa service. Có OpenAPI ban đầu và quy tắc thay đổi tương thích. | P0-02 | Hoàn thành — hợp đồng ban đầu chuẩn bị độc lập khi P0-02 chờ môi trường; [bản ghi](docs/verification/P0-03.md) |
+| P0-04 | Tạo profile-service Quarkus và gateway; resource/DTO/application service/repository tách rõ. Có health/readiness, log và timeout; service build/test độc lập. | P0-03 | Hoàn thành — khung, 10/10 test, Linux images/gateway smoke đạt; JPA/JWT ở P0-05/06, [bản ghi](docs/verification/P0-04.md) |
 | P0-05 | Tạo PostgreSQL phát triển với database/tài khoản profile-service và Flyway; tách runtime/migration role. Schema hồ sơ công khai/riêng, quyền/trạng thái; kiểm tra không truy cập database service khác. | P0-04 | Chưa bắt đầu |
 | P0-06 | Tích hợp xác thực Supabase JWT tại service, bootstrap hồ sơ idempotent cho subject hợp lệ, xử lý username trùng và quyền admin có nguồn tin cậy. Không cấp quyền từ metadata người dùng tự sửa. | P0-05 | Chưa bắt đầu |
 | P0-07 | Hoàn thiện FE đăng ký/xác nhận email/đăng nhập/đăng xuất/quên/đặt lại mật khẩu; API client đính token, xử lý 401/403, refresh lỗi, trả lại URL/bộ lọc; sinh types từ OpenAPI. Xóa cache cá nhân khi đổi tài khoản. | P0-06 | Chưa bắt đầu |
@@ -256,7 +256,7 @@ Việc tiếp theo:
 | Giới hạn nhà cung cấp bản đồ/hạ tầng | Chốt tại P1-05 và cấu hình staging; không tự phát sinh gói trả phí |
 | Chậm do nhiều service hoặc lỗi liên kết | Giữ năm ranh giới hiện có, hợp đồng rõ và kiểm thử từng luồng; chưa thêm service/broker/database khi chưa có yêu cầu |
 
-Đầu việc tiếp theo khi bắt đầu xây dựng là **P0-01**, tiếp đến P0-02 và P0-03. Các file Docker/Java và môi trường production chưa được tạo hoặc chạy chỉ bằng việc hoàn thành bản kế hoạch này.
+Đã triển khai P0-01…04 theo [bản ghi](docs/verification/README.md). P0-02 chờ môi trường test Supabase truy cập được để đóng inventory/backup/migration thật. P0-05…10 chưa thực hiện; Docker/Java foundation không thay nghiệm thu luồng FE → JWT → JPA → PostgreSQL và không cho phép tự migrate/deploy production.
 
 ## 13. Nguồn hướng dẫn triển khai
 

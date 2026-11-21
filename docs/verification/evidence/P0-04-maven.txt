@@ -1,0 +1,92 @@
+[INFO] Scanning for projects...
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO]
+[INFO] -----------------< vn.vietnamtourism:profile-service >------------------
+[INFO] Building profile-service 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to flyway-community-db-support (https://maven.pkg.github.com/flyway/flyway-community-db-support): HTTP Status: 401
+[INFO]
+[INFO] --- enforcer:3.6.2:enforce (default) @ profile-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO]
+[INFO] --- resources:3.5.0:resources (default-resources) @ profile-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO]
+[INFO] --- quarkus:3.40.1.2:generate-code (default) @ profile-service ---
+[INFO]
+[INFO] --- compiler:3.14.1:compile (default-compile) @ profile-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 12 source files with javac [debug parameters release 21] to target\classes
+[INFO]
+[INFO] --- quarkus:3.40.1.2:generate-code-tests (default) @ profile-service ---
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[INFO]
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ profile-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO]
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ profile-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 2 source files with javac [debug parameters release 21] to target\test-classes
+[INFO]
+[INFO] --- surefire:3.5.4:test (default-test) @ profile-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running vn.vietnamtourism.profile.ProfileResourceTest
+2026-11-21T21:33:43.816+07:00 INFO  [org.hibernate.orm.jpa] requestId= HHH008540: Processing PersistenceUnitInfo [name: <default>]
+2026-11-21T21:33:44.102+07:00 INFO  [org.hibernate.orm.core] requestId= HHH000001: Hibernate ORM core version 7.4.9.Final
+2026-11-21T21:33:44.534+07:00 INFO  [org.hibernate.orm.connections.pooling] requestId= HHH10001005: Database info:
+	Database JDBC URL [undefined/unknown]
+	Database driver: undefined/unknown
+	Database dialect: PostgreSQLDialect
+	Database version: 14.0
+	Default catalog/schema: unknown/unknown
+	Autocommit mode: undefined/unknown
+	Isolation level: <unknown>
+	JDBC fetch size: undefined/unknown
+	Pool: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-21T21:33:44.794+07:00 INFO  [org.hibernate.validator.internal.util.Version] requestId= HV000001: Hibernate Validator 9.1.5.Final
+2026-11-21T21:33:45.846+07:00 INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 13.997s. Listening on: http://0.0.0.0:8081
+2026-11-21T21:33:45.847+07:00 INFO  [io.quarkus] requestId= Profile test activated.
+2026-11-21T21:33:45.847+07:00 INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, compose, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, smallrye-context-propagation, smallrye-health, smallrye-openapi, swagger-ui, vertx]
+2026-11-21T21:33:49.878+07:00 ERROR [vn.vietnamtourism.profile.infrastructure.ApiExceptionMapper] requestId=f924912b-15a2-484b-a13d-d131fc5cf108 requestId=f924912b-15a2-484b-a13d-d131fc5cf108 status=503 exception=vn.vietnamtourism.profile.application.ApiException
+2026-11-21T21:33:49.897+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=f924912b-15a2-484b-a13d-d131fc5cf108 requestId=f924912b-15a2-484b-a13d-d131fc5cf108 method=GET status=503
+2026-11-21T21:33:52.737+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=00000000-0000-4000-8000-000000000001 requestId=00000000-0000-4000-8000-000000000001 method=GET status=400
+2026-11-21T21:33:53.595+07:00 INFO  [io.smallrye.health] requestId= SRHCK01001: Reporting health down status: {"status":"DOWN","checks":[{"name":"Database connections health check","status":"UP"},{"name":"profile-store","status":"DOWN","data":{"reason":"P0-05 database not configured"}}]}
+2026-11-21T21:33:53.775+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=863968b8-cbfc-4076-91ed-bca503153991 requestId=863968b8-cbfc-4076-91ed-bca503153991 method=GET status=404
+2026-11-21T21:33:53.960+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=09b045ec-0a71-4cbf-9346-73acb8d2f7aa requestId=09b045ec-0a71-4cbf-9346-73acb8d2f7aa method=POST status=405
+2026-11-21T21:33:54.881+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=90a73beb-45db-4fb4-b202-f3a8169c041d requestId=90a73beb-45db-4fb4-b202-f3a8169c041d method=GET status=400
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.53 s -- in vn.vietnamtourism.profile.ProfileResourceTest
+[INFO] Running vn.vietnamtourism.profile.ProfileApplicationServiceTest
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\ASUS\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.8\byte-buddy-agent-1.18.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.926 s -- in vn.vietnamtourism.profile.ProfileApplicationServiceTest
+2026-11-21T21:33:55.999+07:00 INFO  [io.quarkus] requestId= profile-service stopped in 0.126s
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- jar:3.5.1:jar (default-jar) @ profile-service ---
+[INFO] Building jar: C:\Users\ASUS\OneDrive\Documents\GitHub\vietnam-tourism\VietnamTourism\services\profile-service\target\profile-service-0.1.0-SNAPSHOT.jar
+[INFO]
+[INFO] --- quarkus:3.40.1.2:build (default) @ profile-service ---
+[INFO] [io.quarkus.deployment.QuarkusAugmentor] Quarkus augmentation completed in 16073ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:16 min
+[INFO] Finished at: 2026-11-21T21:34:14+07:00
+[INFO] ------------------------------------------------------------------------

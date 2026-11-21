@@ -1,0 +1,2 @@
+[vietnamtourism/profile-service:p0-04] id=sha256:5379aa540c4aa6734aa7d6fb7fa9cfdaa64d4e991a0c3d752d727b905168e90a user=10001
+[vietnamtourism/gateway:p0-04] id=sha256:ce3f5b7b3903bad4b72281b526ab340abf2aa23ebbd701fad2f14f48114d95c1 user=101

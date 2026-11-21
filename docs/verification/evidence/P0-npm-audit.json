@@ -1,0 +1,20 @@
+{
+  "vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "dependencies": {
+    "prod": 47,
+    "dev": 149,
+    "optional": 59,
+    "peer": 1,
+    "peerOptional": 0,
+    "total": 254
+  },
+  "date": "2026-11-21",
+  "command": "npm audit --json"
+}
