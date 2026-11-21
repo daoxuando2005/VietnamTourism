@@ -1,0 +1,91 @@
+services:
+  profile-db:
+    image: postgres:17.12-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run npm run configure:local}
+      PROFILE_DB_PASSWORD: ${PROFILE_DB_PASSWORD:?Runtime password required}
+      PROFILE_MIGRATION_PASSWORD: ${PROFILE_MIGRATION_PASSWORD:?Migration password required}
+    volumes:
+      - profile_data:/var/lib/postgresql/data
+      - ./infra/postgres/001-profile.sh:/docker-entrypoint-initdb.d/001-profile.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U postgres -d profile']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    mem_limit: 384m
+  profile-migrate:
+    image: vietnamtourism/profile-migrate:${IMAGE_TAG:-p0}
+    build:
+      context: ./services/profile-service
+      target: migrator
+    environment:
+      PROFILE_PERSISTENCE_ENABLED: 'false'
+      PROFILE_JDBC_URL: jdbc:postgresql://profile-db:5432/profile
+      PROFILE_MIGRATION_USER: profile_migration
+      PROFILE_MIGRATION_PASSWORD: ${PROFILE_MIGRATION_PASSWORD}
+    depends_on:
+      profile-db: {condition: service_healthy}
+    restart: 'no'
+    mem_limit: 768m
+  profile-service:
+    image: vietnamtourism/profile-service:${IMAGE_TAG:-p0}
+    build:
+      context: ./services/profile-service
+      target: runtime
+    environment:
+      PROFILE_PERSISTENCE_ENABLED: 'true'
+      PROFILE_JDBC_URL: jdbc:postgresql://profile-db:5432/profile
+      PROFILE_DB_USER: profile_runtime
+      PROFILE_DB_PASSWORD: ${PROFILE_DB_PASSWORD}
+      SUPABASE_JWT_ISSUER: ${SUPABASE_JWT_ISSUER:?JWT issuer required}
+      SUPABASE_JWKS_URL: ${SUPABASE_JWKS_URL:?JWKS URL required}
+      SUPABASE_JWT_AUDIENCE: authenticated
+      SUPABASE_JWT_ALGORITHM: ES256
+    depends_on:
+      profile-migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD-SHELL, 'wget -q -O /dev/null http://127.0.0.1:8081/q/health/ready']
+      interval: 5s
+      timeout: 4s
+      retries: 15
+      start_period: 20s
+    read_only: true
+    tmpfs: [/tmp]
+    mem_limit: 768m
+    cpus: 2.0
+  gateway:
+    image: vietnamtourism/gateway:${IMAGE_TAG:-p0}
+    build: ./infra/gateway
+    ports: ['127.0.0.1:${GATEWAY_PORT:-8080}:8080']
+    depends_on:
+      profile-service: {condition: service_healthy}
+    healthcheck:
+      test: [CMD-SHELL, 'wget -q -O /dev/null http://127.0.0.1:8080/health/live']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    read_only: true
+    tmpfs: [/tmp]
+    mem_limit: 128m
+  frontend:
+    image: vietnamtourism/frontend:${IMAGE_TAG:-p0}
+    build:
+      context: .
+      args:
+        VITE_SUPABASE_URL: ${VITE_SUPABASE_URL:?Supabase public URL required}
+        VITE_SUPABASE_ANON_KEY: ${VITE_SUPABASE_ANON_KEY:?Public publishable key required}
+    ports: ['127.0.0.1:${FRONTEND_PORT:-3000}:8080']
+    depends_on:
+      gateway: {condition: service_healthy}
+    healthcheck:
+      test: [CMD-SHELL, 'wget -q -O /dev/null http://127.0.0.1:8080/healthz']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    read_only: true
+    tmpfs: [/tmp]
+    mem_limit: 128m
+volumes:
+  profile_data:

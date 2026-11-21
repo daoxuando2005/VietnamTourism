@@ -1,0 +1,228 @@
+Building isolated stack
+#1 [internal] load local bake definitions
+#1 reading from stdin 2.72kB done
+#1 DONE 0.0s
+
+#2 [profile-service internal] load build definition from Dockerfile
+#2 transferring dockerfile: 877B done
+#2 DONE 0.0s
+
+#3 [gateway internal] load build definition from Dockerfile
+#3 transferring dockerfile: 143B done
+#3 DONE 0.0s
+
+#4 [frontend internal] load build definition from Dockerfile
+#4 transferring dockerfile: 665B done
+#4 DONE 0.0s
+
+#5 [profile-service internal] load metadata for docker.io/library/eclipse-temurin:21-jdk-alpine
+#5 DONE 0.0s
+
+#6 [gateway internal] load metadata for docker.io/nginxinc/nginx-unprivileged:1.28.2-alpine
+#6 DONE 0.1s
+
+#7 [frontend internal] load metadata for docker.io/library/node:24.22.3-alpine
+#7 DONE 0.1s
+
+#8 [gateway internal] load .dockerignore
+#8 transferring context: 32B
+#8 transferring context: 66B done
+#8 DONE 0.0s
+
+#9 [frontend internal] load .dockerignore
+#9 transferring context: 266B done
+#9 DONE 0.0s
+
+#10 [auth] library/eclipse-temurin:pull token for registry-1.docker.io
+#10 DONE 0.0s
+
+#11 [gateway internal] load build context
+#11 transferring context: 32B done
+#11 DONE 0.0s
+
+#12 [frontend 1/2] FROM docker.io/nginxinc/nginx-unprivileged:1.28.2-alpine@sha256:7377697a821c131a924a7105fafbe7414db4e9fcc77a6f08f776f33f141ec3f8
+#12 resolve docker.io/nginxinc/nginx-unprivileged:1.28.2-alpine@sha256:7377697a821c131a924a7105fafbe7414db4e9fcc77a6f08f776f33f141ec3f8 0.0s done
+#12 DONE 0.0s
+
+#13 [frontend build 1/8] FROM docker.io/library/node:24.22.3-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#13 resolve docker.io/library/node:24.22.3-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 0.0s done
+#13 DONE 0.0s
+
+#14 [gateway 2/2] COPY nginx.conf /etc/nginx/nginx.conf
+#14 CACHED
+
+#15 [gateway] exporting to image
+#15 ...
+
+#16 [frontend internal] load build context
+#16 transferring context: 6.84kB 0.0s done
+#16 DONE 0.0s
+
+#17 [frontend build 8/8] RUN npm run build
+#17 CACHED
+
+#18 [frontend build 3/8] COPY package.json package-lock.json .npmrc ./
+#18 CACHED
+
+#19 [frontend build 6/8] COPY public public
+#19 CACHED
+
+#20 [frontend build 7/8] COPY src src
+#20 CACHED
+
+#21 [frontend build 2/8] WORKDIR /build
+#21 CACHED
+
+#22 [frontend build 4/8] RUN --mount=type=cache,target=/root/.npm npm ci
+#22 CACHED
+
+#23 [frontend build 5/8] COPY tsconfig.json tsconfig.app.json tsconfig.node.json vite.config.ts index.html ./
+#23 CACHED
+
+#24 [frontend stage-1 2/3] COPY infra/frontend/nginx.conf /etc/nginx/nginx.conf
+#24 CACHED
+
+#25 [frontend stage-1 3/3] COPY --from=build --chown=101:101 /build/dist /usr/share/nginx/html
+#25 CACHED
+
+#15 [gateway] exporting to image
+#15 exporting layers 0.0s done
+#15 exporting manifest sha256:717527692118c23a0d15975e8b1756e7a4c49909cb8a72b83ac2ffd3e1190da2 0.0s done
+#15 exporting config sha256:9cc83bb1997c059b85a5dc7c672ddb8f7b5bdd00a7bfe58b858598d9b91c7d0d 0.0s done
+#15 exporting attestation manifest sha256:9a2a64650707d6a6dec2a281ae12377f2b0fc7c839432253e3f4e075915f295c 0.0s done
+#15 exporting manifest list sha256:5c4dc7f1f13cb50bbc4a05f4b9cf1a73cadbb81934c11d0415d30c3756b83dac
+#15 exporting manifest list sha256:5c4dc7f1f13cb50bbc4a05f4b9cf1a73cadbb81934c11d0415d30c3756b83dac 0.0s done
+#15 naming to docker.io/vietnamtourism/gateway:p0-test done
+#15 unpacking to docker.io/vietnamtourism/gateway:p0-test 0.0s done
+#15 DONE 0.2s
+
+#26 [frontend] exporting to image
+#26 exporting layers 0.0s done
+#26 exporting manifest sha256:fc86b097e73d06385a898b782f3af2c18a7e8444907ee09e131d3bf0cda420ac 0.0s done
+#26 exporting config sha256:c394eb143763dd5d4254829a6e79229ae1a66862a6fd4fe5a91546807bcc96b9 0.0s done
+#26 exporting attestation manifest sha256:7db617f851bad940581d85b6a7aaae5b14e10d4e067a3df448efc54e7597a0cd 0.1s done
+#26 exporting manifest list sha256:fa3159bff5158336614b275005f2a59a7181e17e6fc15f114050b104d6e553c5
+#26 exporting manifest list sha256:fa3159bff5158336614b275005f2a59a7181e17e6fc15f114050b104d6e553c5 0.0s done
+#26 naming to docker.io/vietnamtourism/frontend:p0-test 0.0s done
+#26 unpacking to docker.io/vietnamtourism/frontend:p0-test 0.0s done
+#26 DONE 0.3s
+
+#27 [profile-service internal] load metadata for docker.io/library/eclipse-temurin:21-jre-alpine
+#27 ...
+
+#28 [gateway] resolving provenance for metadata file
+#28 DONE 0.0s
+
+#29 [frontend] resolving provenance for metadata file
+#29 DONE 0.0s
+
+#27 [profile-service internal] load metadata for docker.io/library/eclipse-temurin:21-jre-alpine
+#27 DONE 1.8s
+
+#30 [profile-migrate internal] load .dockerignore
+#30 transferring context: 70B done
+#30 DONE 0.0s
+
+#31 [profile-service source 1/6] FROM docker.io/library/eclipse-temurin:21-jdk-alpine@sha256:c07bb82e004a166b5d3d63b84ad70e2e822f228505e2e0c0b8dfdc2890d22f13
+#31 resolve docker.io/library/eclipse-temurin:21-jdk-alpine@sha256:c07bb82e004a166b5d3d63b84ad70e2e822f228505e2e0c0b8dfdc2890d22f13 0.0s done
+#31 DONE 0.0s
+
+#32 [profile-migrate runtime-base 1/3] FROM docker.io/library/eclipse-temurin:21-jre-alpine@sha256:5d7689f47d670aca766b9503a70bccc2d73b4eb9221ae8f714ae958313c4ce70
+#32 resolve docker.io/library/eclipse-temurin:21-jre-alpine@sha256:5d7689f47d670aca766b9503a70bccc2d73b4eb9221ae8f714ae958313c4ce70 0.0s done
+#32 DONE 0.0s
+
+#33 [profile-service internal] load build context
+#33 transferring context: 4.53kB 0.0s done
+#33 DONE 0.0s
+
+#34 [profile-service build 1/1] RUN --mount=type=cache,id=profile-maven-cache,target=/root/.m2,sharing=locked ./mvnw -B -ntp -DskipTests package
+#34 CACHED
+
+#35 [profile-migrate runtime-base 3/3] RUN addgroup -S app && adduser -S -G app -u 10001 app
+#35 CACHED
+
+#36 [profile-migrate source 3/6] COPY .mvn .mvn
+#36 CACHED
+
+#37 [profile-migrate source 5/6] RUN chmod +x mvnw
+#37 CACHED
+
+#38 [profile-migrate migration-build 1/1] RUN --mount=type=cache,id=profile-maven-cache,target=/root/.m2,sharing=locked ./mvnw -B -ntp -DskipTests -Dquarkus.package.main-class=migrate package
+#38 CACHED
+
+#39 [profile-migrate source 2/6] WORKDIR /build
+#39 CACHED
+
+#40 [profile-migrate runtime-base 2/3] WORKDIR /app
+#40 CACHED
+
+#41 [profile-migrate source 6/6] COPY src src
+#41 CACHED
+
+#42 [profile-migrate source 4/6] COPY mvnw pom.xml ./
+#42 CACHED
+
+#43 [profile-service runtime 1/1] COPY --from=build --chown=10001:10001 /build/target/quarkus-app/ ./
+#43 CACHED
+
+#44 [profile-migrate migrator 1/1] COPY --from=migration-build --chown=10001:10001 /build/target/quarkus-app/ ./
+#44 CACHED
+
+#45 [profile-service] exporting to image
+#45 exporting layers done
+#45 exporting manifest sha256:dd9f02aac795c004dfe447b21bca056994f562a5b380d92c2166fa794d3729d7 0.0s done
+#45 exporting config sha256:af1c957dc9c779cd6779ab15783361b5850f4d9883bee6e5efabbd0d3edb0f03
+#45 ...
+
+#46 [profile-migrate] exporting to image
+#46 exporting layers done
+#46 exporting manifest sha256:376c35d0ec195624de9caabe3e65b0835097d5a7621db65f82387c30baeee9b5 0.0s done
+#46 exporting config sha256:8f8f1983b7dbcc13104fd25bec39bc4a3cb9bf50a4a77a50c383b0ff59349467 0.0s done
+#46 exporting attestation manifest sha256:b873cd0e2ce3e7acdab572556a97622b85e4511b3379427da71c1d1b843c76bf 0.0s done
+#46 exporting manifest list sha256:061327e45feb9abf21b5184eced479d152b39ed32a69358b518c341d6f514283 0.0s done
+#46 naming to docker.io/vietnamtourism/profile-migrate:p0-test done
+#46 unpacking to docker.io/vietnamtourism/profile-migrate:p0-test done
+#46 DONE 0.1s
+
+#45 [profile-service] exporting to image
+#45 exporting config sha256:af1c957dc9c779cd6779ab15783361b5850f4d9883bee6e5efabbd0d3edb0f03 0.0s done
+#45 exporting attestation manifest sha256:a888a3e29f48f8081964b7a70a8dbd29235160e6a5014403c69abcf760cd1840 0.0s done
+#45 exporting manifest list sha256:c57e4fd6af39555133407ccc75a65520e2843a5c9b5769d39f999cd996987edf 0.0s done
+#45 naming to docker.io/vietnamtourism/profile-service:p0-test done
+#45 unpacking to docker.io/vietnamtourism/profile-service:p0-test 0.0s done
+#45 DONE 0.2s
+
+#47 [profile-service] resolving provenance for metadata file
+#47 DONE 0.1s
+
+#48 [profile-migrate] resolving provenance for metadata file
+#48 DONE 0.0s
+
+
+Running 3 tests using 1 worker
+
+(node:28420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\stack\auth.spec.ts:11:1 › browser → gateway → JWT → JPA: durable profiles and account isolation (4.2s)
+  ok 2 tests\stack\auth.spec.ts:30:1 › gateway rejects forged/expired JWT; admin comes from DB and is revoked immediately (509ms)
+  ok 3 tests\stack\auth.spec.ts:45:1 › API 401 refreshes once; rejected refresh clears the browser session (2.1s)
+
+  3 passed (7.4s)
+
+
+
+
+__  ____  __  _____   ___  __ ____  ______
+ --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+ -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+--\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+2026-11-21T16:33:41.216Z INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 2.239s. Listening on: http://0.0.0.0:8081
+2026-11-21T16:33:41.217Z INFO  [io.quarkus] requestId= Profile prod activated.
+2026-11-21T16:33:41.217Z INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-jwt, smallrye-openapi, vertx]
+2026-11-21T16:33:41.545Z INFO  [org.flywaydb.core.FlywayExecutor] requestId= Database: jdbc:postgresql://profile-db:5432/profile (PostgreSQL 17.12)
+2026-11-21T16:33:41.623Z INFO  [org.flywaydb.core.internal.command.DbValidate] requestId= Successfully validated 1 migration (execution time 00:00.025s)
+2026-11-21T16:33:41.651Z INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Current version of schema "public": 1
+2026-11-21T16:33:41.654Z INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Schema "public" is up to date. No migration necessary.
+2026-11-21T16:33:41.676Z INFO  [io.quarkus] requestId= profile-service stopped in 0.017s
+PASS: browser real API/JPA, independent container recreate, DB outage/recovery, durable volume, one-shot migration, non-root and least privilege
+

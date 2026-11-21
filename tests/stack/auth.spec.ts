@@ -1,0 +1,60 @@
+import { expect, test, type Page } from '@playwright/test'
+import { sql } from './helpers.mjs'
+const auth='http://127.0.0.1:54321'
+async function login(page:Page,account='a') {
+  await page.goto('/auth/login?returnTo=%2Fprofile%3Fsource%3Dstack')
+  await page.getByLabel('Email',{exact:true}).fill(`${account}@example.test`)
+  await page.getByLabel('Mật khẩu',{exact:true}).fill(`fixture-password-${account.toUpperCase()}`)
+  await page.getByRole('button',{name:'Đăng nhập',exact:true}).click()
+  await expect(page.getByRole('heading',{name:`Tài khoản ${account.toUpperCase()}`,exact:true})).toBeVisible()
+}
+test('browser → gateway → JWT → JPA: durable profiles and account isolation',async({page,request})=>{
+  await login(page)
+  await expect(page).toHaveURL(/\/profile\?source=stack$/)
+  await page.reload()
+  await expect(page.getByRole('heading',{name:'Tài khoản A',exact:true})).toBeVisible()
+  expect(sql("SELECT count(*) FROM profile_public WHERE username='fixture_a';")).toBe('1')
+  sql("UPDATE profile_private SET phone_number='TEST-PRIVATE-A',birth_date='1999-01-02' WHERE id='11111111-1111-4111-8111-111111111111';")
+  const publicResult=await request.get('/api/v1/profiles/fixture_a')
+  expect(publicResult.status()).toBe(200)
+  expect(await publicResult.json()).not.toHaveProperty('phoneNumber')
+  expect((await request.get('/api/v1/me/profile')).status()).toBe(401)
+  await page.getByRole('button',{name:'Đăng xuất',exact:true}).click()
+  await login(page,'b')
+  await expect(page.getByRole('heading',{name:'Tài khoản A',exact:true})).not.toBeVisible()
+  const session=await page.evaluate(()=>JSON.parse(localStorage.getItem('vietnam-tourism-auth-v1')!))
+  const owner=await request.get('/api/v1/me/profile',{headers:{Authorization:`Bearer ${session.access_token}`,'X-User-Id':'11111111-1111-4111-8111-111111111111'}})
+  expect((await owner.json()).id).toBe('22222222-2222-4222-8222-222222222222')
+  expect((await owner.json()).phoneNumber).toBeNull()
+})
+test('gateway rejects forged/expired JWT; admin comes from DB and is revoked immediately',async({request})=>{
+  for(const options of [{badSignature:true},{expired:true}]) {
+    const session=await(await request.post(`${auth}/__test/session`,{data:{email:'a@example.test',...options}})).json()
+    const response=await request.get('/api/v1/me/profile',{headers:{Authorization:`Bearer ${session.access_token}`}})
+    expect(response.status()).toBe(401)
+    expect(await response.json()).toHaveProperty('requestId')
+  }
+  const session=await(await request.post(`${auth}/__test/session`,{data:{email:'b@example.test'}})).json()
+  const headers={Authorization:`Bearer ${session.access_token}`,'X-Role':'ADMIN'}
+  expect((await request.get('/api/v1/admin/access',{headers})).status()).toBe(403)
+  sql("UPDATE profile_access SET app_role='ADMIN' WHERE id='22222222-2222-4222-8222-222222222222';")
+  expect((await request.get('/api/v1/admin/access',{headers})).status()).toBe(200)
+  sql("UPDATE profile_access SET app_role='MEMBER' WHERE id='22222222-2222-4222-8222-222222222222';")
+  expect((await request.get('/api/v1/admin/access',{headers})).status()).toBe(403)
+})
+test('API 401 refreshes once; rejected refresh clears the browser session',async({page,request})=>{
+  await login(page)
+  const damaged=await(await request.post(`${auth}/__test/session`,{data:{email:'a@example.test',badSignature:true}})).json()
+  await page.evaluate(s=>localStorage.setItem('vietnam-tourism-auth-v1',JSON.stringify(s)),damaged)
+  await page.reload()
+  await expect(page.getByRole('heading',{name:'Tài khoản A',exact:true})).toBeVisible()
+  const token=await page.evaluate(()=>JSON.parse(localStorage.getItem('vietnam-tourism-auth-v1')!).access_token)
+  expect(token).not.toBe(damaged.access_token)
+  await request.post(`${auth}/__test/refresh-failure`,{data:{enabled:true}})
+  const failed=await(await request.post(`${auth}/__test/session`,{data:{email:'a@example.test',badSignature:true}})).json()
+  await page.evaluate(s=>localStorage.setItem('vietnam-tourism-auth-v1',JSON.stringify(s)),failed)
+  await page.reload()
+  await expect(page.getByRole('heading',{name:'Đăng nhập',exact:true})).toBeVisible()
+  expect(await page.evaluate(()=>localStorage.getItem('vietnam-tourism-auth-v1'))).toBeNull()
+  await request.post(`${auth}/__test/refresh-failure`,{data:{enabled:false}})
+})

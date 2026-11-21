@@ -19,15 +19,15 @@ function reset() {
 }
 reset()
 function view(u) { return { id:u.id,email:u.email,aud:'authenticated',role:'authenticated',email_confirmed_at:u.confirmed?'2026-11-21T00:00:00Z':null,created_at:'2026-11-21T00:00:00Z',app_metadata:{provider:'email'},user_metadata:u.user_metadata,identities:[] } }
-function jwt(u, bad = false) {
-  const body={iss:issuer,sub:u.id,aud:'authenticated',role:'authenticated',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+3600,email:u.email,user_metadata:u.user_metadata}
+function jwt(u, bad = false, expired = false) {
+  const body={iss:issuer,sub:u.id,aud:'authenticated',role:'authenticated',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+(expired?-120:3600),email:u.email,user_metadata:u.user_metadata}
   const header=Buffer.from(JSON.stringify({alg:'ES256',kid:'fixture-key',typ:'JWT'})).toString('base64url')
   const payload=Buffer.from(JSON.stringify(body)).toString('base64url')
   return `${header}.${payload}.${sign('sha256',Buffer.from(`${header}.${payload}`),{key:bad?rogue:privateKey,dsaEncoding:'ieee-p1363'}).toString('base64url')}`
 }
-function session(u,bad=false) {
+function session(u,bad=false,expired=false) {
   const refresh_token=randomUUID(); refreshes.set(refresh_token,u)
-  return {access_token:jwt(u,bad),token_type:'bearer',expires_in:3600,expires_at:Math.floor(Date.now()/1000)+3600,refresh_token,user:view(u)}
+  return {access_token:jwt(u,bad,expired),token_type:'bearer',expires_in:3600,expires_at:Math.floor(Date.now()/1000)+3600,refresh_token,user:view(u)}
 }
 function principal(request) {
   try {
@@ -38,15 +38,15 @@ function principal(request) {
     return [...users.values()].find(u=>u.id===claims.sub)??null
   } catch { return null }
 }
-function reply(response,status,data) {
+function reply(response,status,data,allowedHeaders='apikey,authorization,content-type,x-client-info,x-supabase-api-version') {
   if(data?.code)data={...data,error_code:data.code}
   response.writeHead(status,{'Content-Type':'application/json','Access-Control-Allow-Origin':'*',
     'X-Supabase-Api-Version':'2024-01-01','Access-Control-Expose-Headers':'X-Supabase-Api-Version',
-    'Access-Control-Allow-Headers':'apikey,authorization,content-type,x-client-info,x-supabase-api-version','Access-Control-Allow-Methods':'GET,POST,PUT,OPTIONS'})
+    'Access-Control-Allow-Headers':allowedHeaders,'Access-Control-Allow-Methods':'GET,POST,PUT,OPTIONS'})
   response.end(status===204?'':JSON.stringify(data))
 }
 const server=http.createServer(async(request,response)=>{
-  if(request.method==='OPTIONS')return reply(response,204,{})
+  if(request.method==='OPTIONS')return reply(response,204,{},request.headers['access-control-request-headers']||'*')
   const url=new URL(request.url,'http://fixture'), route=url.pathname
   let body={}
   try { let raw='';for await(const chunk of request)raw+=chunk;if(raw)body=JSON.parse(raw) } catch { return reply(response,400,{code:'invalid_json'}) }
@@ -56,7 +56,7 @@ const server=http.createServer(async(request,response)=>{
   if(route==='/__test/mailbox')return reply(response,200,[...codes.entries()].filter(([,v])=>v.user.email===url.searchParams.get('email')).map(([code,v])=>({code,type:v.type})))
   if(route==='/__test/refresh-failure'){failRefresh=body.enabled;return reply(response,200,{ok:true})}
   if(route==='/__test/session'){
-    const u=users.get(body.email);return u?reply(response,200,session(u,body.badSignature===true)):reply(response,404,{})
+    const u=users.get(body.email);return u?reply(response,200,session(u,body.badSignature===true,body.expired===true)):reply(response,404,{})
   }
   if(route==='/auth/v1/signup'){
     if(users.has(body.email))return reply(response,422,{code:'user_already_exists',msg:'Fixture duplicate'})

@@ -12,7 +12,9 @@ Cần Node **24.22.3**, npm **11.19.1**, JDK **21** và Docker Engine chạy Lin
 Copy-Item .env.example .env.local
 # Điền public URL/anon hoặc publishable key của Supabase project test.
 npm ci
-npm run dev
+npm run configure:local
+docker compose --env-file .env.local -p vt-p0-dev up -d --build --wait
+# Frontend: http://localhost:3000; gateway: http://localhost:8080
 ```
 
 Không đặt service-role/server key trong `VITE_*`. [Hướng dẫn môi trường local/staging/production và Auth/Storage](docs/operations/DEVELOPMENT.md).
@@ -23,6 +25,11 @@ Không đặt service-role/server key trong `VITE_*`. [Hướng dẫn môi trư�
 npm run lint
 npm run build
 npm run check:contract
+npm run generate:api
+npm run test:unit
+npx playwright install chromium
+npm run test:ui
+npm run test:stack
 npm run test:legacy-db
 cd services/profile-service
 .\mvnw.cmd -B verify
@@ -30,20 +37,18 @@ cd services/profile-service
 
 Linux/macOS dùng `bash ./mvnw -B verify`. Migration test chạy PostgreSQL thật trong container cách ly và tự dọn container của nó. Không dùng script demo reset cũ để thiết lập dữ liệu đang sử dụng.
 
-## Khung backend/gateway P0-04
+## Phát triển và dừng stack
 
 ```powershell
-docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04 build
-docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04 up -d
-# http://localhost:8080/health/live: 200
-# /health/ready và /api/v1/profiles/traveler: 503 vì chưa có database P0-05.
-docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04 down
+npm run dev
+# Vite :5173 proxy /api sang gateway :8080 đang chạy.
+docker compose --env-file .env.local -p vt-p0-dev down
 ```
 
-Chạy `npm run test:gateway` sau build để kiểm tự động gateway/request ID/non-root/lỗi dependency. Stack này chỉ gồm gateway và profile-service, không phải stack P0 hoàn chỉnh. [Hướng dẫn service](services/profile-service/README.md), [API v1](docs/api/CONVENTIONS.md), [OpenAPI](docs/api/profile-v1.yaml).
+Lệnh down giữ volume dữ liệu. Migration là job riêng chạy trước API; không chỉnh Flyway đã apply hoặc chạy reset demo. Stack test tự tạo/xóa volume trong namespace riêng, dùng Auth fixture; stack dev dùng Supabase thật. [Hướng dẫn service](services/profile-service/README.md), [API v1](docs/api/CONVENTIONS.md), [OpenAPI](docs/api/profile-v1.yaml).
 
 ## Dữ liệu và tiến độ
 
 - [Migration guide](migration_guide.md), [kiểm kê legacy](docs/operations/LEGACY_INVENTORY.md), [runbook backup/restore](docs/operations/LEGACY_MIGRATION.md).
-- [Bản ghi P0-01…04](docs/verification/README.md) ghi riêng phần đã làm, test, giới hạn và việc còn thiếu.
-- Chưa hoàn thành đăng nhập xuyên FE/gateway/Quarkus/JPA/PostgreSQL. Supabase hosted chưa được migrate/xác minh trong đợt này; kết quả CI hosted cần xem trên GitHub Actions sau push.
+- [Bản ghi P0](docs/verification/README.md) ghi riêng phần đã làm, test, giới hạn và việc còn thiếu.
+- Đã kiểm luồng browser/gateway/JWT/JPA/PostgreSQL bằng fixture, apply và kiểm RLS hosted. Kiểm Auth hosted bằng hai tài khoản test còn chờ cấu hình local; không coi fixture là nghiệm thu provider thật.

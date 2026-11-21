@@ -50,6 +50,8 @@ export function ProfilePage() {
           return
         }
 
+        // Profile identity must remain readable when a legacy domain is unavailable.
+        if (active) { setUser(resolvedUser); setProfile(resolvedProfile); setLoading(false) }
         // Fetch related stats & activities
         const [userReviews, userFavorites, userActivities] = await Promise.all([
           reviewService.getReviewsByUser(resolvedUser.id),

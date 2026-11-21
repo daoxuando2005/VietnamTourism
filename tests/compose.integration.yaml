@@ -1,0 +1,28 @@
+# Test-only Auth simulator; never include this override in a deployment.
+services:
+  fixture-auth:
+    image: node:24.22.3-alpine
+    user: node
+    command: [node, /fixture/server.mjs]
+    environment:
+      PORT: '9999'
+      JWT_ISSUER: http://fixture-auth:9999/auth/v1
+    volumes: ['./tests/fixtures/auth/server.mjs:/fixture/server.mjs:ro']
+    ports: ['127.0.0.1:54321:9999']
+    read_only: true
+    healthcheck:
+      test: [CMD, node, -e, 'fetch("http://127.0.0.1:9999/health").then(r=>process.exit(r.ok?0:1))']
+      interval: 3s
+      timeout: 3s
+      retries: 15
+  profile-service:
+    environment:
+      SUPABASE_JWT_ISSUER: http://fixture-auth:9999/auth/v1
+      SUPABASE_JWKS_URL: http://fixture-auth:9999/auth/v1/.well-known/jwks.json
+    depends_on:
+      fixture-auth: {condition: service_healthy}
+  frontend:
+    build:
+      args:
+        VITE_SUPABASE_URL: http://127.0.0.1:54321
+        VITE_SUPABASE_ANON_KEY: sb_publishable_fixture_not_real
