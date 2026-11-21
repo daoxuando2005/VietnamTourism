@@ -45,7 +45,7 @@ Thêm trường response tùy chọn là tương thích khi consumer bỏ qua tr
 | Tài khoản bị khóa | Không ghi/đọc dữ liệu cá nhân qua API; hồ sơ công khai bị ẩn |
 | Service | Danh tính máy riêng, scope/audience riêng; không tự nhận vai trò người dùng chỉ bằng header |
 
-P0-06 xác minh signature/algorithm/issuer/audience/expiry/subject và nguồn role/trạng thái. P0-04 chưa cung cấp route riêng tư hoặc ghi nên không có đường cấp quyền tạm. Route dự kiến `GET /api/v1/me/profile` (thông tin chủ sở hữu) và bootstrap idempotent sẽ chỉ được thêm vào OpenAPI runtime cùng kiểm thử P0-06/P0-07. Admin không tự có quyền xem liên hệ cá nhân nếu không có nghiệp vụ được duyệt.
+P0-06 đã xác minh signature/algorithm/issuer/audience/expiry/subject và nguồn role/trạng thái. `GET/POST /api/v1/me/profile` đọc/bootstrap idempotent; `/api/v1/admin/access` kiểm quyền tin cậy trong database. Các route này và DTO runtime được đối chiếu OpenAPI trong CI. Admin không tự có quyền xem liên hệ cá nhân nếu không có nghiệp vụ được duyệt.
 
 Service sở hữu DB/entity/repository riêng. API tổng hợp dùng batch tối đa 100 ID, scope dữ liệu công khai hoặc quyền người dùng được ủy quyền; không nối JDBC/SQL chéo. Hiện chưa có caller liên service trong P0-04; khi thêm phải triển khai xác thực máy (JWT machine identity/credential riêng, không reuse service-role Supabase làm mật khẩu API), timeout và kiểm thử cho phép/từ chối trước khi mở route. Backend lưu role chỉ được chỉnh bởi nguồn tin cậy, không nhận role từ user metadata. Không tạo shared entity hoặc broker trong phạm vi này.
 

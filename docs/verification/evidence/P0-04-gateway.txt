@@ -16,7 +16,7 @@ PASS: /health/live -> 200
 PASS: /health/ready -> 503
 PASS: /api/v1/profiles/traveler -> 503 DEPENDENCY_UNAVAILABLE
 PASS: /api/v1/profiles/ab -> 400 INVALID_ARGUMENT
-PASS: /api/v1/me/profile -> 404 NOT_FOUND
+PASS: /api/v1/me/profile -> 401 UNAUTHENTICATED
 PASS: /api/v1/unknown -> 404 NOT_FOUND
 PASS: /api/v1/profiles/traveler -> 413 PAYLOAD_TOO_LARGE
 $ docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04-smoke exec -T profile-service id -u
@@ -33,11 +33,85 @@ $ docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04-smoke exec -T p
 {
   "openapi" : "3.1.0",
   "components" : {
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT"
+      },
+      "SecurityScheme" : {
+        "type" : "http",
+        "scheme" : "bearer",
+        "bearerFormat" : "JWT",
+        "description" : "Authentication"
+      }
+    },
     "schemas" : {
+      "BootstrapRequest" : {
+        "type" : "object",
+        "required" : [ "username", "displayName" ],
+        "properties" : {
+          "username" : {
+            "type" : "string",
+            "pattern" : "[a-z0-9_]{3,40}"
+          },
+          "displayName" : {
+            "type" : "string",
+            "pattern" : "\\S",
+            "maxLength" : 100
+          }
+        }
+      },
       "Instant" : {
         "type" : "string",
         "format" : "date-time",
         "examples" : [ "2022-03-10T16:15:50Z" ]
+      },
+      "LocalDate" : {
+        "type" : "string",
+        "format" : "date",
+        "examples" : [ "2022-03-10" ]
+      },
+      "OwnProfileResponse" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "$ref" : "#/components/schemas/UUID"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "displayName" : {
+            "type" : "string"
+          },
+          "bio" : {
+            "type" : "string"
+          },
+          "avatarUrl" : {
+            "type" : "string"
+          },
+          "coverUrl" : {
+            "type" : "string"
+          },
+          "website" : {
+            "type" : "string"
+          },
+          "location" : {
+            "type" : "string"
+          },
+          "createdAt" : {
+            "$ref" : "#/components/schemas/Instant"
+          },
+          "birthDate" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "phoneNumber" : {
+            "type" : "string"
+          },
+          "role" : {
+            "type" : "string"
+          }
+        }
       },
       "PublicProfileResponse" : {
         "type" : "object",
@@ -79,6 +153,113 @@ $ docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04-smoke exec -T p
     }
   },
   "paths" : {
+    "/api/v1/admin/access" : {
+      "get" : {
+        "operationId" : "checkAdminAccess",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "object",
+                  "additionalProperties" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Get",
+        "tags" : [ "Admin Access Resource" ]
+      }
+    },
+    "/api/v1/me/profile" : {
+      "get" : {
+        "operationId" : "getOwnProfile",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OwnProfileResponse"
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Get",
+        "tags" : [ "Account Resource" ]
+      },
+      "post" : {
+        "operationId" : "bootstrapProfile",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BootstrapRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/OwnProfileResponse"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Bootstrap",
+        "tags" : [ "Account Resource" ]
+      }
+    },
+    "/api/v1/profiles/id/{id}" : {
+      "get" : {
+        "operationId" : "getPublicProfileById",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/UUID"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PublicProfileResponse"
+                }
+              }
+            }
+          }
+        },
+        "summary" : "Get By Id",
+        "tags" : [ "Profile Resource" ]
+      }
+    },
     "/api/v1/profiles/{username}" : {
       "get" : {
         "summary" : "Đọc thông tin hồ sơ công khai",
@@ -118,10 +299,10 @@ $ docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04-smoke exec -T p
   },
   "info" : {
     "title" : "VietnamTourism Profile API",
-    "version" : "1.0.0"
+    "version" : "1.1.0"
   }
 }
-PASS: runtime public DTO fields and operation match reviewed contract
+PASS: runtime public/owner/bootstrap DTO fields and all operations match reviewed contract
 PASS: OpenAPI 3.0 validation, public field boundary, public route security declaration
 
 $ docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04-smoke stop profile-service
@@ -135,68 +316,72 @@ $ docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04-smoke start pro
 
 PASS: upstream stop/start recovers without restarting gateway
 $ docker compose -f infra/gateway/compose.smoke.yaml -p vt-p0-04-smoke logs --no-color
-profile-service-1  | __  ____  __  _____   ___  __ ____  ______
 gateway-1          | /docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration
-profile-service-1  |  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
+profile-service-1  | __  ____  __  _____   ___  __ ____  ______
 gateway-1          | /docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/
-gateway-1          | /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+profile-service-1  |  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
 profile-service-1  |  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
+profile-service-1  | --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
+gateway-1          | /docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+profile-service-1  | 2026-11-21T16:34:40.539Z INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 2.760s. Listening on: http://0.0.0.0:8081
 gateway-1          | 10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf
 gateway-1          | 10-listen-on-ipv6-by-default.sh: info: /etc/nginx/conf.d/default.conf differs from the packaged version
+profile-service-1  | 2026-11-21T16:34:40.540Z INFO  [io.quarkus] requestId= Profile prod activated.
 gateway-1          | /docker-entrypoint.sh: Sourcing /docker-entrypoint.d/15-local-resolvers.envsh
 gateway-1          | /docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh
 gateway-1          | /docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh
-profile-service-1  | --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
 gateway-1          | /docker-entrypoint.sh: Configuration complete; ready for start up
-gateway-1          | {"requestId":"85e989b13f8fe3032db21010031c15f0","method":"GET","status":503,"duration":0.001}
-profile-service-1  | 2026-11-21T14:41:34.905Z INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 2.809s. Listening on: http://0.0.0.0:8081
-profile-service-1  | 2026-11-21T14:41:34.905Z INFO  [io.quarkus] requestId= Profile prod activated.
-profile-service-1  | 2026-11-21T14:41:34.906Z INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, smallrye-context-propagation, smallrye-health, smallrye-openapi, vertx]
-gateway-1          | 2026/11/21 14:41:32 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-profile-service-1  | 2026-11-21T14:41:35.195Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=d3024cc06f2e764df6f581113dc029b5 requestId=d3024cc06f2e764df6f581113dc029b5 method=GET status=400
-profile-service-1  | 2026-11-21T14:41:35.482Z INFO  [io.smallrye.health] requestId= SRHCK01001: Reporting health down status: {"status":"DOWN","checks":[{"name":"profile-store","status":"DOWN","data":{"reason":"P0-05 database not configured"}},{"name":"Database connections health check","status":"UP"}]}
-profile-service-1  | 2026-11-21T14:41:35.565Z ERROR [vn.vietnamtourism.profile.infrastructure.ApiExceptionMapper] requestId=de0fd3adbfbdd675dc0a456e0b468a4d requestId=de0fd3adbfbdd675dc0a456e0b468a4d status=503 exception=vn.vietnamtourism.profile.application.ApiException
-profile-service-1  | 2026-11-21T14:41:35.566Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=de0fd3adbfbdd675dc0a456e0b468a4d requestId=de0fd3adbfbdd675dc0a456e0b468a4d method=GET status=503
-gateway-1          | 2026/11/21 14:41:33 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"d4496fed3f7296041602a93faf17c35e","method":"GET","status":503,"duration":0.001}
-gateway-1          | 2026/11/21 14:41:33 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"e4fa7fbe598355093cc0287f554c46f4","method":"GET","status":503,"duration":0.000}
-gateway-1          | 2026/11/21 14:41:34 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"823d34241d76e1503fb6d0799aa9d9b5","method":"GET","status":503,"duration":0.001}
-profile-service-1  | 2026-11-21T14:41:35.574Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=8ccd33afae19485db844bc2d2efb1681 requestId=8ccd33afae19485db844bc2d2efb1681 method=GET status=400
-gateway-1          | 2026/11/21 14:41:34 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"1a74fc8e16da579b9b9c5e3c5bb29f63","method":"GET","status":503,"duration":0.001}
-gateway-1          | {"requestId":"d3024cc06f2e764df6f581113dc029b5","method":"GET","status":400,"duration":0.289}
-gateway-1          | {"requestId":"fbf3160923020a817a38556591e89d9c","method":"GET","status":200,"duration":0.000}
-profile-service-1  | 2026-11-21T14:41:37.335Z INFO  [io.quarkus] requestId= profile-service stopped in 0.030s
-gateway-1          | {"requestId":"f673dd1dc68ef1dc9823872749d5a855","method":"GET","status":503,"duration":0.119}
+profile-service-1  | 2026-11-21T16:34:40.540Z INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-jwt, smallrye-openapi, vertx]
+profile-service-1  | 2026-11-21T16:34:40.835Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=d894a6ef6afd2202d24f18f29c5ed7d7 requestId=d894a6ef6afd2202d24f18f29c5ed7d7 method=GET status=400
+profile-service-1  | 2026-11-21T16:34:40.942Z INFO  [io.smallrye.health] requestId= SRHCK01001: Reporting health down status: {"status":"DOWN","checks":[{"name":"profile-store","status":"DOWN","data":{"reason":"P0-05 database not configured"}},{"name":"Database connections health check","status":"UP"}]}
+gateway-1          | 2026/11/21 16:34:38 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+profile-service-1  | 2026-11-21T16:34:40.972Z ERROR [vn.vietnamtourism.profile.infrastructure.ApiExceptionMapper] requestId=2d27821536fc3352b9890c7f8bb3d1df requestId=2d27821536fc3352b9890c7f8bb3d1df status=503 exception=vn.vietnamtourism.profile.application.ApiException
+gateway-1          | {"requestId":"29fe09810bf15b32552f631a931db3b3","method":"GET","status":503,"duration":0.002}
+gateway-1          | 2026/11/21 16:34:38 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"0e0bc72e59af4188cefc235c6c6a3699","method":"GET","status":503,"duration":0.000}
+gateway-1          | {"requestId":"0cbf1c0329e10a7b881cdf0bfc8b4016","method":"GET","status":503,"duration":0.000}
+gateway-1          | 2026/11/21 16:34:39 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"c48cc99a88b34db59a9e6f99a946b7d3","method":"GET","status":503,"duration":0.000}
+profile-service-1  | 2026-11-21T16:34:40.972Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=2d27821536fc3352b9890c7f8bb3d1df requestId=2d27821536fc3352b9890c7f8bb3d1df method=GET status=503
+gateway-1          | 2026/11/21 16:34:39 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"328800c7bcc98681969bd982b9f3bb90","method":"GET","status":503,"duration":0.001}
+profile-service-1  | 2026-11-21T16:34:40.980Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=b9ba2d1160dafbf77b22acf3157d57cb requestId=b9ba2d1160dafbf77b22acf3157d57cb method=GET status=400
+profile-service-1  | 2026-11-21T16:34:41.036Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=747aa79ad3bd63eec5a959f22789f714 requestId=747aa79ad3bd63eec5a959f22789f714 method=GET status=401
+profile-service-1  | 2026-11-21T16:34:41.044Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=b681efd76fa736a7cc7fa4f083f255da requestId=b681efd76fa736a7cc7fa4f083f255da method=GET status=404
+profile-service-1  | 2026-11-21T16:34:42.856Z INFO  [io.quarkus] requestId= profile-service stopped in 0.022s
+gateway-1          | 2026/11/21 16:34:40 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
 profile-service-1  | __  ____  __  _____   ___  __ ____  ______
+gateway-1          | {"requestId":"d894a6ef6afd2202d24f18f29c5ed7d7","method":"GET","status":400,"duration":0.307}
 profile-service-1  |  --/ __ \/ / / / _ | / _ \/ //_/ / / / __/
 profile-service-1  |  -/ /_/ / /_/ / __ |/ , _/ ,< / /_/ /\ \
 profile-service-1  | --\___\_\____/_/ |_/_/|_/_/|_|\____/___/
-gateway-1          | {"requestId":"de0fd3adbfbdd675dc0a456e0b468a4d","method":"GET","status":503,"duration":0.082}
-gateway-1          | {"requestId":"8ccd33afae19485db844bc2d2efb1681","method":"GET","status":400,"duration":0.003}
-gateway-1          | {"requestId":"ef1952f387689077f2196e1a34d177ea","method":"GET","status":404,"duration":0.000}
-gateway-1          | {"requestId":"8f59a2a75f910775d077d0400ce3169e","method":"GET","status":404,"duration":0.000}
-gateway-1          | 2026/11/21 14:41:35 [error] 29#29: *8 client intended to send too large body: 1048577 bytes, client: 172.20.0.1, server: , request: "POST /api/v1/profiles/traveler HTTP/1.1", host: "127.0.0.1:8080"
-profile-service-1  | 2026-11-21T14:41:42.316Z INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 2.474s. Listening on: http://0.0.0.0:8081
-profile-service-1  | 2026-11-21T14:41:42.317Z INFO  [io.quarkus] requestId= Profile prod activated.
-gateway-1          | {"requestId":"539f54eee1cc25ee1b07f8256d3ea500","method":"POST","status":413,"duration":0.043}
-profile-service-1  | 2026-11-21T14:41:42.317Z INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, smallrye-context-propagation, smallrye-health, smallrye-openapi, vertx]
-gateway-1          | {"requestId":"32fe2fda616d8cd1d5c9921a01e0778c","method":"GET","status":503,"duration":2.002}
-profile-service-1  | 2026-11-21T14:41:42.519Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=7df969c1bbec26a26c0d62b596f2277d requestId=7df969c1bbec26a26c0d62b596f2277d method=GET status=400
-gateway-1          | 2026/11/21 14:41:39 [error] 29#29: *1 upstream timed out (110: Operation timed out) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/traveler HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/traveler", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"671c0e5952c4c2b1c03bcb632df57ad0","method":"GET","status":503,"duration":0.001}
-gateway-1          | 2026/11/21 14:41:39 [error] 29#29: *13 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | 2026/11/21 14:41:40 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"3c2f594409df6b6ee8ec4d5f95689f89","method":"GET","status":503,"duration":0.000}
-gateway-1          | {"requestId":"5a381a32bb614c080e92467d65843c04","method":"GET","status":503,"duration":0.000}
-gateway-1          | 2026/11/21 14:41:40 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | 2026/11/21 14:41:41 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"ade6830808157d4ccc9c9fc554e234a1","method":"GET","status":503,"duration":0.000}
-gateway-1          | {"requestId":"90b7ee716dcfe13f43db5e1dbbb94db9","method":"GET","status":503,"duration":0.000}
-gateway-1          | 2026/11/21 14:41:41 [error] 29#29: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.20.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.20.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8080"
-gateway-1          | {"requestId":"7df969c1bbec26a26c0d62b596f2277d","method":"GET","status":400,"duration":0.247}
+gateway-1          | {"requestId":"d565aeafe9150bcf5e7422dd241f46b4","method":"GET","status":200,"duration":0.000}
+profile-service-1  | 2026-11-21T16:34:48.048Z INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 2.689s. Listening on: http://0.0.0.0:8081
+profile-service-1  | 2026-11-21T16:34:48.049Z INFO  [io.quarkus] requestId= Profile prod activated.
+profile-service-1  | 2026-11-21T16:34:48.049Z INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-jwt, smallrye-openapi, vertx]
+profile-service-1  | 2026-11-21T16:34:48.566Z INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=cb6f82c17e73b0e4c24021f247f8e736 requestId=cb6f82c17e73b0e4c24021f247f8e736 method=GET status=400
+gateway-1          | {"requestId":"644829004b2a3a05f3e9bde2642dd535","method":"GET","status":503,"duration":0.057}
+gateway-1          | {"requestId":"2d27821536fc3352b9890c7f8bb3d1df","method":"GET","status":503,"duration":0.029}
+gateway-1          | {"requestId":"b9ba2d1160dafbf77b22acf3157d57cb","method":"GET","status":400,"duration":0.003}
+gateway-1          | {"requestId":"747aa79ad3bd63eec5a959f22789f714","method":"GET","status":401,"duration":0.055}
+gateway-1          | {"requestId":"b681efd76fa736a7cc7fa4f083f255da","method":"GET","status":404,"duration":0.005}
+gateway-1          | 2026/11/21 16:34:41 [error] 30#30: *9 client intended to send too large body: 1048577 bytes, client: 172.21.0.1, server: , request: "POST /api/v1/profiles/traveler HTTP/1.1", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"5f0838dd25998ddf69d174b10c4463bb","method":"POST","status":413,"duration":0.006}
+gateway-1          | 2026/11/21 16:34:45 [error] 30#30: *1 upstream timed out (110: Operation timed out) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/traveler HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/traveler", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"56f58e2665e44c8c85c56387f16513a3","method":"GET","status":503,"duration":2.003}
+gateway-1          | 2026/11/21 16:34:45 [error] 30#30: *16 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"198fe0ad5a78330377866b67f724168d","method":"GET","status":503,"duration":0.000}
+gateway-1          | 2026/11/21 16:34:45 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"660fe2944a2cba02cd4ac39c25a273ca","method":"GET","status":503,"duration":0.000}
+gateway-1          | 2026/11/21 16:34:46 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"afb9db1ca735132c1813ba0ee004dd3a","method":"GET","status":503,"duration":0.000}
+gateway-1          | {"requestId":"a6ed3037e2433ae665610a82d40da62d","method":"GET","status":503,"duration":0.000}
+gateway-1          | 2026/11/21 16:34:46 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | 2026/11/21 16:34:47 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"bc80edcd7d5d4aeb6f046cbd11cd480c","method":"GET","status":503,"duration":0.001}
+gateway-1          | {"requestId":"c272fff39f64f87ae851db560e86956d","method":"GET","status":503,"duration":0.000}
+gateway-1          | 2026/11/21 16:34:47 [error] 30#30: *1 connect() failed (111: Connection refused) while connecting to upstream, client: 172.21.0.1, server: , request: "GET /api/v1/profiles/ab HTTP/1.1", upstream: "http://172.21.0.2:8081/api/v1/profiles/ab", host: "127.0.0.1:8089"
+gateway-1          | {"requestId":"cb6f82c17e73b0e4c24021f247f8e736","method":"GET","status":400,"duration":0.266}
 
 PASS: users non-root; no runtime compiler/env; request IDs correlate; no Authorization/identity values in logs
 Cleanup smoke stack: OK

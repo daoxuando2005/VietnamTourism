@@ -225,4 +225,3 @@ __  ____  __  _____   ___  __ ____  ______
 2026-11-21T16:33:41.654Z INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Schema "public" is up to date. No migration necessary.
 2026-11-21T16:33:41.676Z INFO  [io.quarkus] requestId= profile-service stopped in 0.017s
 PASS: browser real API/JPA, independent container recreate, DB outage/recovery, durable volume, one-shot migration, non-root and least privilege
-

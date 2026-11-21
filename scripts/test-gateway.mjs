@@ -15,7 +15,7 @@ function docker(args) {
 }
 function compose(args) { return docker([...prefix,...args]) }
 async function request(route, options) {
-  return fetch(`http://127.0.0.1:8080${route}`, { ...options, signal:AbortSignal.timeout(8000) })
+  return fetch(`http://127.0.0.1:${process.env.SMOKE_PORT||8080}${route}`, { ...options, signal:AbortSignal.timeout(8000) })
 }
 async function connected() {
   for (let i=0; i<60; i++) {
@@ -51,7 +51,7 @@ try {
   })
   assert.notEqual(missing.body.requestId,'forged-edge-id')
   await check('/api/v1/profiles/ab',400,'INVALID_ARGUMENT')
-  await check('/api/v1/me/profile',404,'NOT_FOUND')
+  await check('/api/v1/me/profile',401,'UNAUTHENTICATED')
   await check('/api/v1/unknown',404,'NOT_FOUND')
   await check('/api/v1/profiles/traveler',413,'PAYLOAD_TOO_LARGE', { method:'POST', body:'x'.repeat(1024*1024+1) })
   assert.equal(compose(['exec','-T','profile-service','id','-u']).trim(),'10001')

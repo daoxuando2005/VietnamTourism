@@ -22,6 +22,11 @@ if (process.env.PROFILE_OPENAPI_URL || process.env.PROFILE_OPENAPI_FILE) {
   const dto = runtime.components.schemas.PublicProfileResponse
   assert.ok(dto, 'runtime public DTO schema exists')
   assert.deepEqual(Object.keys(dto.properties).sort(), fields)
-  console.log('PASS: runtime public DTO fields and operation match reviewed contract')
+  for(const [route,path] of Object.entries(spec.paths)) {
+    for(const method of ['get','post'])if(path[method])assert.equal(runtime.paths[route]?.[method]?.operationId,path[method].operationId)
+  }
+  assert.deepEqual(Object.keys(runtime.components.schemas.OwnProfileResponse.properties).sort(),Object.keys(spec.components.schemas.OwnProfile.properties).sort())
+  assert.deepEqual(Object.keys(runtime.components.schemas.BootstrapRequest.properties).sort(),Object.keys(spec.components.schemas.BootstrapRequest.properties).sort())
+  console.log('PASS: runtime public/owner/bootstrap DTO fields and all operations match reviewed contract')
 }
 console.log('PASS: OpenAPI 3.0 validation, public field boundary, public route security declaration')

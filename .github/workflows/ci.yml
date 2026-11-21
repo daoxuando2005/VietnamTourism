@@ -17,6 +17,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run check:contract
+      - run: npm run generate:api
+      - run: git diff --exit-code -- src/api/generated
+      - run: npm run test:unit
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui
       - run: npm run test:legacy-db
       - uses: actions/upload-artifact@v4
         if: always()
@@ -63,3 +68,22 @@ jobs:
         with:
           name: gateway-smoke-report
           path: docs/verification/evidence/P0-04-gateway.txt
+  stack:
+    runs-on: ubuntu-latest
+    needs: [frontend, profile]
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: mkdir -p .tools && npm run test:stack > .tools/stack.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: stack-test-report
+          path: .tools/stack.log
