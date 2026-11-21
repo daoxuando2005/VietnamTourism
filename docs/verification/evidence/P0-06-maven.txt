@@ -1,0 +1,189 @@
+[INFO] Scanning for projects...
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO]
+[INFO] -----------------< vn.vietnamtourism:profile-service >------------------
+[INFO] Building profile-service 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to flyway-community-db-support (https://maven.pkg.github.com/flyway/flyway-community-db-support): HTTP Status: 401
+[INFO]
+[INFO] --- enforcer:3.6.2:enforce (default) @ profile-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO]
+[INFO] --- resources:3.5.0:resources (default-resources) @ profile-service ---
+[INFO] Copying 4 resources from src\main\resources to target\classes
+[INFO]
+[INFO] --- quarkus:3.40.1.2:generate-code (default) @ profile-service ---
+[INFO]
+[INFO] --- compiler:3.14.1:compile (default-compile) @ profile-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 24 source files with javac [debug parameters release 21] to target\classes
+[INFO]
+[INFO] --- quarkus:3.40.1.2:generate-code-tests (default) @ profile-service ---
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[INFO]
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ profile-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO]
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ profile-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 7 source files with javac [debug parameters release 21] to target\test-classes
+[INFO]
+[INFO] --- surefire:3.5.4:test (default-test) @ profile-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running vn.vietnamtourism.profile.AccountSecurityTest
+2026-11-21T22:36:45.162+07:00 INFO  [org.testcontainers.images.PullPolicy] requestId= Image pull policy will be performed by: DefaultPullPolicy()
+2026-11-21T22:36:45.169+07:00 INFO  [org.testcontainers.utility.ImageNameSubstitutor] requestId= Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+2026-11-21T22:36:45.178+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Testcontainers version: 2.0.5
+2026-11-21T22:36:45.496+07:00 INFO  [org.testcontainers.dockerclient.DockerClientProviderStrategy] requestId= Loaded org.testcontainers.dockerclient.NpipeSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+2026-11-21T22:36:46.277+07:00 INFO  [org.testcontainers.dockerclient.DockerClientProviderStrategy] requestId= Found Docker environment with local Npipe socket (npipe:////./pipe/docker_engine)
+2026-11-21T22:36:46.278+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Docker host IP address is localhost
+2026-11-21T22:36:46.323+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Connected to docker:
+  Server Version: 29.4.2
+  API Version: 1.54
+  Operating System: Docker Desktop
+  Total Memory: 3727 MB
+  Labels:
+    com.docker.desktop.address=npipe://\\.\pipe\docker_cli
+2026-11-21T22:36:46.563+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Creating container for image: testcontainers/ryuk:0.14.0
+2026-11-21T22:36:46.950+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Container testcontainers/ryuk:0.14.0 is starting: 8976c14d5cc37cca56c7f545e76f5338116030cb0d024b1251e376b287bb46b9
+2026-11-21T22:36:47.841+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Container testcontainers/ryuk:0.14.0 started in PT1.2774189S
+2026-11-21T22:36:47.854+07:00 INFO  [org.testcontainers.utility.RyukResourceReaper] requestId= Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+2026-11-21T22:36:47.854+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Checking the system...
+2026-11-21T22:36:47.855+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= ?? Docker server version should be at least 1.6.0
+2026-11-21T22:36:47.856+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Creating container for image: postgres:17.12-alpine
+2026-11-21T22:36:47.983+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container postgres:17.12-alpine is starting: c2b20dd3a8c9780688bfb01af38203f221db2d6835ff901cba6206f74a4faaec
+2026-11-21T22:36:50.419+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container postgres:17.12-alpine started in PT2.5634533S
+2026-11-21T22:36:50.421+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container is started (JDBC URL: jdbc:postgresql://localhost:49732/postgres?loggerLevel=OFF)
+2026-11-21T22:36:51.651+07:00 INFO  [org.flywaydb.core.FlywayExecutor] requestId= Database: jdbc:postgresql://localhost:49732/profile?loggerLevel=OFF (PostgreSQL 17.12)
+2026-11-21T22:36:51.864+07:00 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] requestId= Schema history table "public"."flyway_schema_history" does not exist yet
+2026-11-21T22:36:51.873+07:00 INFO  [org.flywaydb.core.internal.command.DbValidate] requestId= Successfully validated 1 migration (execution time 00:00.053s)
+2026-11-21T22:36:51.905+07:00 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] requestId= Creating Schema History table "public"."flyway_schema_history" ...
+2026-11-21T22:36:52.059+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Current version of schema "public": << Empty Schema >>
+2026-11-21T22:36:52.089+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Migrating schema "public" to version "1 - profile schema"
+2026-11-21T22:36:52.192+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Successfully applied 1 migration to schema "public", now at version v1 (execution time 00:00.050s)
+2026-11-21T22:36:53.077+07:00 INFO  [org.hibernate.orm.jpa] requestId= HHH008540: Processing PersistenceUnitInfo [name: <default>]
+2026-11-21T22:36:53.218+07:00 INFO  [org.hibernate.orm.core] requestId= HHH000001: Hibernate ORM core version 7.4.9.Final
+2026-11-21T22:36:53.726+07:00 INFO  [org.hibernate.orm.connections.pooling] requestId= HHH10001005: Database info:
+	Database JDBC URL [undefined/unknown]
+	Database driver: undefined/unknown
+	Database dialect: PostgreSQLDialect
+	Database version: 14.0
+	Default catalog/schema: unknown/unknown
+	Autocommit mode: undefined/unknown
+	Isolation level: <unknown>
+	JDBC fetch size: undefined/unknown
+	Pool: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-21T22:36:54.280+07:00 INFO  [org.hibernate.validator.internal.util.Version] requestId= HV000001: Hibernate Validator 9.1.5.Final
+2026-11-21T22:36:57.265+07:00 INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 22.414s. Listening on: http://0.0.0.0:8081
+2026-11-21T22:36:57.266+07:00 INFO  [io.quarkus] requestId= Profile test activated.
+2026-11-21T22:36:57.266+07:00 INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, compose, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-jwt, smallrye-openapi, swagger-ui, vertx]
+2026-11-21T22:37:01.321+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=825e37bb-c52a-4ed9-b4bc-5ee75261d961 requestId=825e37bb-c52a-4ed9-b4bc-5ee75261d961 method=POST status=200
+2026-11-21T22:37:02.126+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=48451a6e-341f-48c6-811e-9ebe37df4dbc requestId=48451a6e-341f-48c6-811e-9ebe37df4dbc method=POST status=200
+2026-11-21T22:37:02.193+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=d4b651f0-8c8a-4465-aede-91a6706c653a requestId=d4b651f0-8c8a-4465-aede-91a6706c653a method=POST status=200
+2026-11-21T22:37:02.397+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=c0b4cef7-d746-42dc-9f5d-9d617a84fb73 requestId=c0b4cef7-d746-42dc-9f5d-9d617a84fb73 method=GET status=401
+2026-11-21T22:37:02.491+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=d78fdeaa-cd0a-4c00-ae28-6dd6a3034049 requestId=d78fdeaa-cd0a-4c00-ae28-6dd6a3034049 method=GET status=401
+2026-11-21T22:37:02.532+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=1fb7dd60-043c-4376-9647-7cf70c6ef5d7 requestId=1fb7dd60-043c-4376-9647-7cf70c6ef5d7 method=GET status=401
+2026-11-21T22:37:02.577+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=e836af66-dbc2-4142-9820-6ee2b8efb116 requestId=e836af66-dbc2-4142-9820-6ee2b8efb116 method=GET status=401
+2026-11-21T22:37:02.608+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=4aaf707b-cd8d-4c7c-ab88-c7e5ff4ccc1f requestId=4aaf707b-cd8d-4c7c-ab88-c7e5ff4ccc1f method=GET status=401
+2026-11-21T22:37:02.643+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=49e3ba54-51c1-44c1-a9d0-852510984f73 requestId=49e3ba54-51c1-44c1-a9d0-852510984f73 method=GET status=401
+2026-11-21T22:37:02.679+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=a3146ba2-a5f8-42a8-b467-edcaa3988875 requestId=a3146ba2-a5f8-42a8-b467-edcaa3988875 method=GET status=401
+2026-11-21T22:37:02.756+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=ba3fa0d4-c45d-4462-ab2e-5ef3268dba77 requestId=ba3fa0d4-c45d-4462-ab2e-5ef3268dba77 method=GET status=403
+2026-11-21T22:37:03.135+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=e9e80c63-8546-4069-b324-6a7cef2e0a5f requestId=e9e80c63-8546-4069-b324-6a7cef2e0a5f method=GET status=404
+2026-11-21T22:37:03.173+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=f548f236-23cc-4e9f-b4ee-07c4d9600019 requestId=f548f236-23cc-4e9f-b4ee-07c4d9600019 method=POST status=403
+2026-11-21T22:37:03.225+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=45646ffd-5be3-4fd5-9069-14085f164a7f requestId=45646ffd-5be3-4fd5-9069-14085f164a7f method=POST status=400
+2026-11-21T22:37:03.263+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=0621f163-d8bb-4098-ad0d-9b47c30d96e3 requestId=0621f163-d8bb-4098-ad0d-9b47c30d96e3 method=POST status=400
+2026-11-21T22:37:03.299+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=6cf9085b-e7df-4ee2-bf72-9344c25462d4 requestId=6cf9085b-e7df-4ee2-bf72-9344c25462d4 method=POST status=400
+2026-11-21T22:37:03.326+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=cb8f7709-0406-45b6-abf6-1b5e852314dd requestId=cb8f7709-0406-45b6-abf6-1b5e852314dd method=GET status=200
+2026-11-21T22:37:03.367+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=9c4dc6c6-78f6-41f4-8bce-d44786b1035e requestId=9c4dc6c6-78f6-41f4-8bce-d44786b1035e method=GET status=200
+2026-11-21T22:37:03.422+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=14b0cb9b-4379-49d7-bc3b-1feb60b125d1 requestId=14b0cb9b-4379-49d7-bc3b-1feb60b125d1 method=GET status=200
+2026-11-21T22:37:03.482+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=5af3b404-6a0a-4444-8f00-280b7f4c52e3 requestId=5af3b404-6a0a-4444-8f00-280b7f4c52e3 method=GET status=200
+2026-11-21T22:37:03.511+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=d7c65834-881e-495a-b34c-68a98e11a471 requestId=d7c65834-881e-495a-b34c-68a98e11a471 method=GET status=403
+2026-11-21T22:37:03.547+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=76171651-0418-433d-8016-183012716167 requestId=76171651-0418-433d-8016-183012716167 method=GET status=403
+2026-11-21T22:37:03.575+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=0727a11f-2d81-4618-968f-4a09c48a71ef requestId=0727a11f-2d81-4618-968f-4a09c48a71ef method=GET status=200
+2026-11-21T22:37:03.626+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=bf8d9705-706d-40b6-99fc-b57f4a7ad540 requestId=bf8d9705-706d-40b6-99fc-b57f4a7ad540 method=GET status=403
+2026-11-21T22:37:03.715+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=d7f4ad20-5960-4e40-b988-c78bd0ea0396 requestId=d7f4ad20-5960-4e40-b988-c78bd0ea0396 method=POST status=200
+2026-11-21T22:37:03.749+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=57eb6198-f007-4aac-bdfc-4270bdec71c3 requestId=57eb6198-f007-4aac-bdfc-4270bdec71c3 method=POST status=200
+2026-11-21T22:37:03.751+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=d44082b5-8fd3-403d-a52d-0e8ab7181932 requestId=d44082b5-8fd3-403d-a52d-0e8ab7181932 method=POST status=200
+2026-11-21T22:37:03.751+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=51ba6de3-9cce-4ec7-81d1-ad702b4f25d8 requestId=51ba6de3-9cce-4ec7-81d1-ad702b4f25d8 method=POST status=200
+2026-11-21T22:37:03.751+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=59129c3b-f184-485a-b609-3e52a30079da requestId=59129c3b-f184-485a-b609-3e52a30079da method=POST status=200
+2026-11-21T22:37:03.764+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=36c342ba-ded5-4403-9e11-7396dfdacc5b requestId=36c342ba-ded5-4403-9e11-7396dfdacc5b method=POST status=200
+2026-11-21T22:37:03.777+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=7083d7bc-2b91-49f8-9c07-edbcbe70da4a requestId=7083d7bc-2b91-49f8-9c07-edbcbe70da4a method=POST status=200
+2026-11-21T22:37:03.789+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=c0b21ee5-e068-4f57-aae3-9205204ae180 requestId=c0b21ee5-e068-4f57-aae3-9205204ae180 method=POST status=200
+2026-11-21T22:37:03.869+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=45320e1c-c5c7-4c59-88a4-1de802625609 requestId=45320e1c-c5c7-4c59-88a4-1de802625609 method=POST status=409
+2026-11-21T22:37:03.894+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=77973090-a779-4df2-b061-8f106d1f0a4a requestId=77973090-a779-4df2-b061-8f106d1f0a4a method=GET status=401
+2026-11-21T22:37:03.916+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=42104a44-39e5-4041-b278-209bfbf20a6c requestId=42104a44-39e5-4041-b278-209bfbf20a6c method=GET status=401
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 18.85 s -- in vn.vietnamtourism.profile.AccountSecurityTest
+[INFO] Running vn.vietnamtourism.profile.ProfilePersistenceTest
+2026-11-21T22:37:03.979+07:00 INFO  [io.quarkus] requestId= profile-service stopped in 0.043s
+2026-11-21T22:37:05.805+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Creating container for image: postgres:17.12-alpine
+2026-11-21T22:37:05.945+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container postgres:17.12-alpine is starting: 513b01beb01fe6f2c0c2f724b9e7ef5b08975bcbe460151db4152e7988c6b060
+2026-11-21T22:37:07.859+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container postgres:17.12-alpine started in PT2.0541224S
+2026-11-21T22:37:07.859+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container is started (JDBC URL: jdbc:postgresql://localhost:61931/postgres?loggerLevel=OFF)
+2026-11-21T22:37:08.071+07:00 INFO  [org.flywaydb.core.FlywayExecutor] requestId= Database: jdbc:postgresql://localhost:61931/profile?loggerLevel=OFF (PostgreSQL 17.12)
+2026-11-21T22:37:08.112+07:00 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] requestId= Schema history table "public"."flyway_schema_history" does not exist yet
+2026-11-21T22:37:08.114+07:00 INFO  [org.flywaydb.core.internal.command.DbValidate] requestId= Successfully validated 1 migration (execution time 00:00.010s)
+2026-11-21T22:37:08.141+07:00 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] requestId= Creating Schema History table "public"."flyway_schema_history" ...
+2026-11-21T22:37:08.212+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Current version of schema "public": << Empty Schema >>
+2026-11-21T22:37:08.223+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Migrating schema "public" to version "1 - profile schema"
+2026-11-21T22:37:08.285+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Successfully applied 1 migration to schema "public", now at version v1 (execution time 00:00.047s)
+2026-11-21T22:37:08.554+07:00 INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 0.256s. Listening on: http://0.0.0.0:8081
+2026-11-21T22:37:08.554+07:00 INFO  [io.quarkus] requestId= Profile test activated.
+2026-11-21T22:37:08.554+07:00 INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, compose, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-jwt, smallrye-openapi, swagger-ui, vertx]
+2026-11-21T22:37:08.632+07:00 INFO  [org.flywaydb.core.FlywayExecutor] requestId= Database: jdbc:postgresql://localhost:61931/profile?loggerLevel=OFF (PostgreSQL 17.12)
+2026-11-21T22:37:08.666+07:00 INFO  [org.flywaydb.core.internal.command.DbValidate] requestId= Successfully validated 1 migration (execution time 00:00.010s)
+2026-11-21T22:37:08.695+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Current version of schema "public": 1
+2026-11-21T22:37:08.696+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Schema "public" is up to date. No migration necessary.
+2026-11-21T22:37:08.837+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=47d1262a-8981-4c81-b355-e1777b6b1f56 requestId=47d1262a-8981-4c81-b355-e1777b6b1f56 method=GET status=404
+2026-11-21T22:37:08.869+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=554282a6-6b18-4277-abbb-0ca7a91af88d requestId=554282a6-6b18-4277-abbb-0ca7a91af88d method=GET status=404
+2026-11-21T22:37:08.896+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=023822db-d900-45a8-8b53-ec4e5464ec2f requestId=023822db-d900-45a8-8b53-ec4e5464ec2f method=GET status=200
+2026-11-21T22:37:08.931+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=2e0c9624-ed61-43ac-b55f-d20a05d83e4b requestId=2e0c9624-ed61-43ac-b55f-d20a05d83e4b method=GET status=404
+2026-11-21T22:37:08.951+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=8bae1c40-543c-41a5-8462-b8a579dbbfda requestId=8bae1c40-543c-41a5-8462-b8a579dbbfda method=GET status=200
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.096 s -- in vn.vietnamtourism.profile.ProfilePersistenceTest
+[INFO] Running vn.vietnamtourism.profile.ProfileResourceTest
+2026-11-21T22:37:09.195+07:00 INFO  [io.quarkus] requestId= profile-service stopped in 0.024s
+2026-11-21T22:37:10.851+07:00 INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 1.169s. Listening on: http://0.0.0.0:8081
+2026-11-21T22:37:10.851+07:00 INFO  [io.quarkus] requestId= Profile test activated.
+2026-11-21T22:37:10.851+07:00 INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, compose, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, security, smallrye-context-propagation, smallrye-health, smallrye-jwt, smallrye-openapi, swagger-ui, vertx]
+2026-11-21T22:37:11.343+07:00 ERROR [vn.vietnamtourism.profile.infrastructure.ApiExceptionMapper] requestId=ec67bf9c-e94b-48b9-81c4-c979709df499 requestId=ec67bf9c-e94b-48b9-81c4-c979709df499 status=503 exception=vn.vietnamtourism.profile.application.ApiException
+2026-11-21T22:37:11.350+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=ec67bf9c-e94b-48b9-81c4-c979709df499 requestId=ec67bf9c-e94b-48b9-81c4-c979709df499 method=GET status=503
+2026-11-21T22:37:11.544+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=00000000-0000-4000-8000-000000000001 requestId=00000000-0000-4000-8000-000000000001 method=GET status=400
+2026-11-21T22:37:11.628+07:00 INFO  [io.smallrye.health] requestId= SRHCK01001: Reporting health down status: {"status":"DOWN","checks":[{"name":"profile-store","status":"DOWN","data":{"reason":"P0-05 database not configured"}},{"name":"Database connections health check","status":"UP"}]}
+2026-11-21T22:37:11.672+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=7c74b2d7-2e83-48db-a7f6-0b1f306a14ff requestId=7c74b2d7-2e83-48db-a7f6-0b1f306a14ff method=GET status=401
+2026-11-21T22:37:11.698+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=a7282b3d-4582-4815-9bf3-19642d9bc347 requestId=a7282b3d-4582-4815-9bf3-19642d9bc347 method=POST status=405
+2026-11-21T22:37:11.877+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=3bd4750c-afa7-43bb-b050-5640d8125658 requestId=3bd4750c-afa7-43bb-b050-5640d8125658 method=GET status=400
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.717 s -- in vn.vietnamtourism.profile.ProfileResourceTest
+[INFO] Running vn.vietnamtourism.profile.ProfileApplicationServiceTest
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\ASUS\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.8\byte-buddy-agent-1.18.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.426 s -- in vn.vietnamtourism.profile.ProfileApplicationServiceTest
+2026-11-21T22:37:12.347+07:00 INFO  [io.quarkus] requestId= profile-service stopped in 0.022s
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 24, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- jar:3.5.1:jar (default-jar) @ profile-service ---
+[INFO] Building jar: C:\Users\ASUS\OneDrive\Documents\GitHub\vietnam-tourism\VietnamTourism\services\profile-service\target\profile-service-0.1.0-SNAPSHOT.jar
+[INFO]
+[INFO] --- quarkus:3.40.1.2:build (default) @ profile-service ---
+[INFO] [io.quarkus.deployment.QuarkusAugmentor] Quarkus augmentation completed in 5948ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:03 min
+[INFO] Finished at: 2026-11-21T22:37:19+07:00
+[INFO] ------------------------------------------------------------------------

@@ -20,4 +20,6 @@ public class ProfileResource {
     @APIResponse(responseCode = "404", description = "Profile not found")
     @APIResponse(responseCode = "503", description = "Profile store unavailable")
     public PublicProfileResponse get(@PathParam("username") String username) { return service.getPublicProfile(username); }
+    @GET @Path("/id/{id}") @Operation(operationId="getPublicProfileById")
+    public PublicProfileResponse getById(@PathParam("id") java.util.UUID id) { return service.getPublicProfile(id); }
 }

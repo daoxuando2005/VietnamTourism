@@ -28,6 +28,8 @@ class ProfilePersistenceTest {
     @Test void absentAndBlockedProfilesAreHidden() {
         given().get("/api/v1/profiles/fixture_missing").then().statusCode(404).body("code",is("PROFILE_NOT_FOUND"));
         given().get("/api/v1/profiles/fixture_blocked").then().statusCode(404);
+        given().get("/api/v1/profiles/id/00000000-0000-4000-8000-000000000001").then().statusCode(200).body("username",is("fixture_a"));
+        given().get("/api/v1/profiles/id/00000000-0000-4000-8000-000000000002").then().statusCode(404);
     }
     @Test void realDatabaseMakesReadinessUp() {
         given().get("/q/health/ready").then().statusCode(200).body("status",is("UP"));

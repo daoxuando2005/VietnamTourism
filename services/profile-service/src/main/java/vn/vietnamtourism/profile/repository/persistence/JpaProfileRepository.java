@@ -6,6 +6,7 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
+import java.util.UUID;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import vn.vietnamtourism.profile.application.ApiException;
 import vn.vietnamtourism.profile.domain.PublicProfile;
@@ -15,6 +16,14 @@ import vn.vietnamtourism.profile.repository.ProfileRepository;
 public class JpaProfileRepository implements ProfileRepository {
     @Inject Instance<EntityManager> entityManager;
     @ConfigProperty(name = "PROFILE_PERSISTENCE_ENABLED", defaultValue = "false") boolean enabled;
+
+    @Override @Transactional
+    public Optional<PublicProfile> findPublicById(UUID id) {
+        if (!enabled) throw new ApiException(503,"DEPENDENCY_UNAVAILABLE","Dịch vụ hồ sơ chưa sẵn sàng.");
+        return entityManager.get().createQuery("from PublicProfileEntity p where p.id=:id and p.accountStatus='ACTIVE'",PublicProfileEntity.class)
+            .setParameter("id",id).setMaxResults(1).getResultStream().findFirst()
+            .map(p->new PublicProfile(p.id,p.username,p.displayName,p.bio,p.avatarUrl,p.coverUrl,p.website,p.location,p.createdAt));
+    }
 
     @Override
     @Transactional

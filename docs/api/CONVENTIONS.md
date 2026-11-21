@@ -1,6 +1,6 @@
 # API v1 và ranh giới dịch vụ — P0-03
 
-Ngày chốt: 21/11/2026 (Asia/Saigon). Hợp đồng đầu tiên: [profile-v1.yaml](profile-v1.yaml). Runtime P0-04 chỉ triển khai GET hồ sơ công khai; chưa có database P0-05 nên trả 503, không trả dữ liệu mẫu. OpenAPI sinh từ Java tại `/q/openapi?format=JSON` dùng đối chiếu với hợp đồng đã duyệt. Chỉ mở tài liệu runtime trên mạng phát triển/nội bộ.
+Ngày chốt: 21/11/2026 (Asia/Saigon). Hợp đồng hiện tại v1.1: [profile-v1.yaml](profile-v1.yaml). Sau P0-06 có public GET theo username/ID, me GET/POST bootstrap và admin access probe với JWT/role database; chưa có API sửa hồ sơ đầy đủ P2. OpenAPI sinh từ Java tại `/q/openapi?format=JSON` dùng đối chiếu hợp đồng; chỉ mở trên mạng phát triển/nội bộ. Persistence mặc định tắt khi chưa được cấu hình, không trả dữ liệu mẫu.
 
 ## Định danh, đường dẫn, thời gian và tiền
 

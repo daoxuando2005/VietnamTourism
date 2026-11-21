@@ -30,7 +30,7 @@ class ProfileResourceTest {
             .then().statusCode(400).header("X-Request-ID",not("untrusted-identifier"));
     }
     @Test void privateAndWriteRoutesAreNotExposed() {
-        given().header("X-User-ID","forged").get("/api/v1/me/profile").then().statusCode(404);
+        given().header("X-User-ID","forged").get("/api/v1/me/profile").then().statusCode(401);
         given().contentType("application/json").body("{}").post("/api/v1/profiles/traveler").then().statusCode(405);
     }
     @Test void runtimeOpenApiContainsOnlyImplementedPublicRoute() {
