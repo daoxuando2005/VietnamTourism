@@ -60,6 +60,7 @@ try {
   assert.equal(compose(['exec','-T','profile-service','find','/app','-name','.env*']).trim(),'')
   const runtime = compose(['exec','-T','profile-service','wget','-qO-','http://127.0.0.1:8081/q/openapi?format=JSON'])
   const runtimePath = path.join(root,'.tools/P0-04-runtime-openapi.json')
+  mkdirSync(path.dirname(runtimePath),{recursive:true})
   writeFileSync(runtimePath,runtime)
   const contract = spawnSync(process.execPath,['scripts/check-contract.mjs'], {
     cwd:root,encoding:'utf8',env:{...process.env,PROFILE_OPENAPI_FILE:runtimePath}

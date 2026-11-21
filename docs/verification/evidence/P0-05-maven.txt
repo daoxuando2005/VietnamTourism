@@ -1,0 +1,144 @@
+[INFO] Scanning for projects...
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO]
+[INFO] -----------------< vn.vietnamtourism:profile-service >------------------
+[INFO] Building profile-service 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[WARNING] Could not transfer metadata /.meta/prefixes.txt from/to flyway-community-db-support (https://maven.pkg.github.com/flyway/flyway-community-db-support): HTTP Status: 401
+[INFO]
+[INFO] --- enforcer:3.6.2:enforce (default) @ profile-service ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO]
+[INFO] --- resources:3.5.0:resources (default-resources) @ profile-service ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO]
+[INFO] --- quarkus:3.40.1.2:generate-code (default) @ profile-service ---
+[INFO]
+[INFO] --- compiler:3.14.1:compile (default-compile) @ profile-service ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 13 source files with javac [debug parameters release 21] to target\classes
+[INFO]
+[INFO] --- quarkus:3.40.1.2:generate-code-tests (default) @ profile-service ---
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository central (prefixes-central.txt)
+[INFO] Loaded 24568 auto-discovered prefixes for remote repository maven-central (prefixes-maven-central.txt)
+[INFO]
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ profile-service ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO]
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ profile-service ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 5 source files with javac [debug parameters release 21] to target\test-classes
+[INFO]
+[INFO] --- surefire:3.5.4:test (default-test) @ profile-service ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO]
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running vn.vietnamtourism.profile.ProfilePersistenceTest
+2026-11-21T21:59:35.895+07:00 INFO  [org.testcontainers.images.PullPolicy] requestId= Image pull policy will be performed by: DefaultPullPolicy()
+2026-11-21T21:59:35.900+07:00 INFO  [org.testcontainers.utility.ImageNameSubstitutor] requestId= Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+2026-11-21T21:59:35.910+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Testcontainers version: 2.0.5
+2026-11-21T21:59:36.241+07:00 INFO  [org.testcontainers.dockerclient.DockerClientProviderStrategy] requestId= Loaded org.testcontainers.dockerclient.NpipeSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+2026-11-21T21:59:37.036+07:00 INFO  [org.testcontainers.dockerclient.DockerClientProviderStrategy] requestId= Found Docker environment with local Npipe socket (npipe:////./pipe/docker_engine)
+2026-11-21T21:59:37.038+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Docker host IP address is localhost
+2026-11-21T21:59:37.076+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Connected to docker:
+  Server Version: 29.4.2
+  API Version: 1.54
+  Operating System: Docker Desktop
+  Total Memory: 3727 MB
+  Labels:
+    com.docker.desktop.address=npipe://\\.\pipe\docker_cli
+2026-11-21T21:59:37.347+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Pulling docker image: testcontainers/ryuk:0.14.0. Please be patient; this may take some time but only needs to be done once.
+2026-11-21T21:59:43.294+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Starting to pull image
+2026-11-21T21:59:43.313+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Pulling image layers:  0 pending,  0 downloaded,  0 extracted, (0 bytes/0 bytes)
+2026-11-21T21:59:45.128+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Pulling image layers:  1 pending,  1 downloaded,  0 extracted, (1 MB/? MB)
+2026-11-21T21:59:45.226+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Pulling image layers:  0 pending,  2 downloaded,  0 extracted, (1 MB/2 MB)
+2026-11-21T21:59:45.228+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Pulling image layers:  0 pending,  2 downloaded,  1 extracted, (1 MB/2 MB)
+2026-11-21T21:59:45.230+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Pulling image layers:  0 pending,  2 downloaded,  2 extracted, (1 MB/2 MB)
+2026-11-21T21:59:45.233+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Pull complete. 2 layers, pulled in 1s (downloaded 1 MB at 1 MB/s)
+2026-11-21T21:59:45.233+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Image testcontainers/ryuk:0.14.0 pull took PT7.8859137S
+2026-11-21T21:59:45.383+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Creating container for image: testcontainers/ryuk:0.14.0
+2026-11-21T21:59:45.599+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Container testcontainers/ryuk:0.14.0 is starting: c88683006161d1de00b8ffabf8c85dff6de7610d461dfad1c386585c5c3e94e7
+2026-11-21T21:59:46.342+07:00 INFO  [tc.testcontainers/ryuk:0.14.0] requestId= Container testcontainers/ryuk:0.14.0 started in PT0.9586812S
+2026-11-21T21:59:46.354+07:00 INFO  [org.testcontainers.utility.RyukResourceReaper] requestId= Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+2026-11-21T21:59:46.354+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= Checking the system...
+2026-11-21T21:59:46.355+07:00 INFO  [org.testcontainers.DockerClientFactory] requestId= ?? Docker server version should be at least 1.6.0
+2026-11-21T21:59:46.356+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Creating container for image: postgres:17.12-alpine
+2026-11-21T21:59:46.465+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container postgres:17.12-alpine is starting: aca9c8b9fe92e429fe2ec2ae272f84449686728b3bed4309a055bd974dd6ed35
+2026-11-21T21:59:48.439+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container postgres:17.12-alpine started in PT2.0823709S
+2026-11-21T21:59:48.439+07:00 INFO  [tc.postgres:17.12-alpine] requestId= Container is started (JDBC URL: jdbc:postgresql://localhost:53467/postgres?loggerLevel=OFF)
+2026-11-21T21:59:49.083+07:00 INFO  [org.flywaydb.core.FlywayExecutor] requestId= Database: jdbc:postgresql://localhost:53467/profile?loggerLevel=OFF (PostgreSQL 17.12)
+2026-11-21T21:59:49.156+07:00 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] requestId= Schema history table "public"."flyway_schema_history" does not exist yet
+2026-11-21T21:59:49.160+07:00 INFO  [org.flywaydb.core.internal.command.DbValidate] requestId= Successfully validated 1 migration (execution time 00:00.022s)
+2026-11-21T21:59:49.182+07:00 INFO  [org.flywaydb.core.internal.schemahistory.JdbcTableSchemaHistory] requestId= Creating Schema History table "public"."flyway_schema_history" ...
+2026-11-21T21:59:49.262+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Current version of schema "public": << Empty Schema >>
+2026-11-21T21:59:49.280+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Migrating schema "public" to version "1 - profile schema"
+2026-11-21T21:59:49.345+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Successfully applied 1 migration to schema "public", now at version v1 (execution time 00:00.042s)
+2026-11-21T21:59:49.726+07:00 INFO  [org.hibernate.orm.jpa] requestId= HHH008540: Processing PersistenceUnitInfo [name: <default>]
+2026-11-21T21:59:49.836+07:00 INFO  [org.hibernate.orm.core] requestId= HHH000001: Hibernate ORM core version 7.4.9.Final
+2026-11-21T21:59:50.184+07:00 INFO  [org.hibernate.orm.connections.pooling] requestId= HHH10001005: Database info:
+	Database JDBC URL [undefined/unknown]
+	Database driver: undefined/unknown
+	Database dialect: PostgreSQLDialect
+	Database version: 14.0
+	Default catalog/schema: unknown/unknown
+	Autocommit mode: undefined/unknown
+	Isolation level: <unknown>
+	JDBC fetch size: undefined/unknown
+	Pool: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-11-21T21:59:50.401+07:00 INFO  [org.hibernate.validator.internal.util.Version] requestId= HV000001: Hibernate Validator 9.1.5.Final
+2026-11-21T21:59:52.302+07:00 INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 32.461s. Listening on: http://0.0.0.0:8081
+2026-11-21T21:59:52.302+07:00 INFO  [io.quarkus] requestId= Profile test activated.
+2026-11-21T21:59:52.302+07:00 INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, compose, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, smallrye-context-propagation, smallrye-health, smallrye-openapi, swagger-ui, vertx]
+2026-11-21T21:59:52.932+07:00 INFO  [org.flywaydb.core.FlywayExecutor] requestId= Database: jdbc:postgresql://localhost:53467/profile?loggerLevel=OFF (PostgreSQL 17.12)
+2026-11-21T21:59:52.962+07:00 INFO  [org.flywaydb.core.internal.command.DbValidate] requestId= Successfully validated 1 migration (execution time 00:00.010s)
+2026-11-21T21:59:52.991+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Current version of schema "public": 1
+2026-11-21T21:59:52.993+07:00 INFO  [org.flywaydb.core.internal.command.DbMigrate] requestId= Schema "public" is up to date. No migration necessary.
+2026-11-21T21:59:57.079+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=f77b9406-be93-4e5d-b0ce-8f81b4d36bfd requestId=f77b9406-be93-4e5d-b0ce-8f81b4d36bfd method=GET status=404
+2026-11-21T21:59:57.214+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=3a9a0d50-bf85-41de-beb8-384fdc067ca8 requestId=3a9a0d50-bf85-41de-beb8-384fdc067ca8 method=GET status=404
+2026-11-21T21:59:57.293+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=b1aba79b-1c96-462f-aac8-eaf761afcef1 requestId=b1aba79b-1c96-462f-aac8-eaf761afcef1 method=GET status=200
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 21.67 s -- in vn.vietnamtourism.profile.ProfilePersistenceTest
+[INFO] Running vn.vietnamtourism.profile.ProfileResourceTest
+2026-11-21T21:59:57.713+07:00 INFO  [io.quarkus] requestId= profile-service stopped in 0.059s
+2026-11-21T21:59:59.819+07:00 INFO  [io.quarkus] requestId= profile-service 0.1.0-SNAPSHOT on JVM (powered by Quarkus 3.40.1.2) started in 1.545s. Listening on: http://0.0.0.0:8081
+2026-11-21T21:59:59.819+07:00 INFO  [io.quarkus] requestId= Profile test activated.
+2026-11-21T21:59:59.819+07:00 INFO  [io.quarkus] requestId= Installed features: [agroal, cdi, compose, flyway, hibernate-orm, hibernate-validator, jdbc-postgresql, narayana-jta, rest, rest-jackson, smallrye-context-propagation, smallrye-health, smallrye-openapi, swagger-ui, vertx]
+2026-11-21T22:00:00.721+07:00 ERROR [vn.vietnamtourism.profile.infrastructure.ApiExceptionMapper] requestId=8100214c-7c50-406c-8e2e-6b2180313c99 requestId=8100214c-7c50-406c-8e2e-6b2180313c99 status=503 exception=vn.vietnamtourism.profile.application.ApiException
+2026-11-21T22:00:00.732+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=8100214c-7c50-406c-8e2e-6b2180313c99 requestId=8100214c-7c50-406c-8e2e-6b2180313c99 method=GET status=503
+2026-11-21T22:00:01.032+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=00000000-0000-4000-8000-000000000001 requestId=00000000-0000-4000-8000-000000000001 method=GET status=400
+2026-11-21T22:00:01.308+07:00 INFO  [io.smallrye.health] requestId= SRHCK01001: Reporting health down status: {"status":"DOWN","checks":[{"name":"profile-store","status":"DOWN","data":{"reason":"P0-05 database not configured"}},{"name":"Database connections health check","status":"UP"}]}
+2026-11-21T22:00:01.356+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=96310cde-e09b-4cb0-832f-4832d2c6aa97 requestId=96310cde-e09b-4cb0-832f-4832d2c6aa97 method=GET status=404
+2026-11-21T22:00:01.409+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=930e0b4a-e976-4563-9f1b-db1ff29d5a7c requestId=930e0b4a-e976-4563-9f1b-db1ff29d5a7c method=POST status=405
+2026-11-21T22:00:01.752+07:00 INFO  [vn.vietnamtourism.profile.infrastructure.RequestIdFilter] requestId=1241af81-74ed-46f0-82b1-22964e0d2261 requestId=1241af81-74ed-46f0-82b1-22964e0d2261 method=GET status=400
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.109 s -- in vn.vietnamtourism.profile.ProfileResourceTest
+[INFO] Running vn.vietnamtourism.profile.ProfileApplicationServiceTest
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\ASUS\.m2\repository\net\bytebuddy\byte-buddy-agent\1.18.8\byte-buddy-agent-1.18.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.521 s -- in vn.vietnamtourism.profile.ProfileApplicationServiceTest
+2026-11-21T22:00:02.350+07:00 INFO  [io.quarkus] requestId= profile-service stopped in 0.051s
+[INFO]
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 17, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
+[INFO]
+[INFO] --- jar:3.5.1:jar (default-jar) @ profile-service ---
+[INFO] Building jar: C:\Users\ASUS\OneDrive\Documents\GitHub\vietnam-tourism\VietnamTourism\services\profile-service\target\profile-service-0.1.0-SNAPSHOT.jar
+[INFO]
+[INFO] --- quarkus:3.40.1.2:build (default) @ profile-service ---
+[INFO] [io.quarkus.deployment.QuarkusAugmentor] Quarkus augmentation completed in 8743ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  01:32 min
+[INFO] Finished at: 2026-11-21T22:00:12+07:00
+[INFO] ------------------------------------------------------------------------

@@ -1,3 +1,3 @@
 # Profile migrations
 
-P0-05 will add the initial versioned Flyway schema, runtime/migration roles and PostgreSQL integration tests here. No schema is created or automatically modified in P0-04. The entity mapping is a draft for that migration; keep persistence disabled until schema validation passes.
+V1 creates the public/private/access tables and runtime column grants. Run Flyway using `profile_migration` in one controlled migration job; API processes use `profile_runtime` and schema validation only. Never enable automatic create/update or Flyway clean. PostgreSQL/Testcontainers tests verify the schema, JPA queries, constraints and role isolation. Compose migration wiring and volume durability are verified in P0-08.

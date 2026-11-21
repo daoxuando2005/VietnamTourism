@@ -19,10 +19,11 @@ public class ApiExceptionMapper implements ExceptionMapper<Throwable> {
         var requestId = request.getProperty(RequestIdFilter.KEY);
         String id = requestId == null ? UUID.randomUUID().toString() : requestId.toString();
         int status = error instanceof ApiException e ? e.status
+            : error instanceof jakarta.persistence.PersistenceException ? 503
             : error instanceof WebApplicationException e ? e.getResponse().getStatus() : 500;
         String code = error instanceof ApiException e ? e.code : switch (status) {
             case 400 -> "INVALID_ARGUMENT"; case 401 -> "UNAUTHENTICATED"; case 403 -> "FORBIDDEN";
-            case 404 -> "NOT_FOUND"; case 405 -> "METHOD_NOT_ALLOWED"; default -> "INTERNAL_ERROR";
+            case 404 -> "NOT_FOUND"; case 405 -> "METHOD_NOT_ALLOWED"; case 503 -> "DEPENDENCY_UNAVAILABLE"; default -> "INTERNAL_ERROR";
         };
         String message = error instanceof ApiException ? error.getMessage() : "Không thể xử lý yêu cầu.";
         if (status >= 500) LOG.errorf("requestId=%s status=%d exception=%s", id, status, error.getClass().getName());
