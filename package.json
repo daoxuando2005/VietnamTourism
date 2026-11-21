@@ -23,7 +23,8 @@
     "test:ui": "playwright test --config playwright.ui.config.ts",
     "configure:local": "node scripts/configure-local.mjs",
     "preview": "vite preview",
-    "test:stack": "node scripts/test-stack.mjs"
+    "test:stack": "node scripts/test-stack.mjs",
+    "test:live": "node scripts/test-live-auth.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",

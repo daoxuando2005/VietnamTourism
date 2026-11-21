@@ -1,0 +1,18 @@
+{
+  "projectRef": "aljsmtodrkspqxbutiuz",
+  "remoteMigration": { "version": "20261121163114", "name": "profile_api_cutover", "source": "supabase/migrations/202611210002_profile_api_cutover.sql" },
+  "checks": {
+    "cutoverRollbackProbe": "passed",
+    "rlsTables": 7,
+    "authenticatedLegacyProfileColumnUpdate": false,
+    "authenticatedLegacyPrivateRead": false,
+    "remainingAuthUsers": 0,
+    "remainingProfiles": 0,
+    "remainingFavorites": 0,
+    "remainingReviews": 0,
+    "remainingFeedRows": 0
+  },
+  "securityAdvisor": { "error": 0, "warning": 0, "info": 1, "infoReason": "profiles_private intentionally has RLS enabled with no policy and no API grants: deny all after cutover" },
+  "liveAuthVerified": false,
+  "liveAuthBlocker": "Two confirmed Supabase test accounts not yet configured in ignored .env.e2e.local. No email or provider token was simulated as real."
+}

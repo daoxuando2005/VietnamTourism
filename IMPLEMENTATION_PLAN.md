@@ -100,7 +100,7 @@ Tham chiếu TECH-01 đến TECH-04, SEC-01, AUTH-01 và PROFILE-01 phần đọ
 | P0-07 | Hoàn thiện FE đăng ký/xác nhận email/đăng nhập/đăng xuất/quên/đặt lại mật khẩu; API client đính token, xử lý 401/403, refresh lỗi, trả lại URL/bộ lọc; sinh types từ OpenAPI. Xóa cache cá nhân khi đổi tài khoản. | P0-06 | Hoàn thành FE local — 13 unit + 5 browser tests; provider thật ở P0-10, [bản ghi](docs/verification/P0-07.md) |
 | P0-08 | Dockerfile riêng cho profile-service, FE, gateway; Compose với PostgreSQL, volume, DNS nội bộ và cấu hình mẫu. Runtime non-root, không secrets; migration có một bước chạy được kiểm soát. | P0-05 | Hoàn thành local — build/run, volume/recreate/outage/role đạt, [bản ghi](docs/verification/P0-08.md) |
 | P0-09 | CI ban đầu: FE build/lint, Quarkus test với PostgreSQL và JWT test fixtures, migration/role tests, contract check; tạo một smoke test Playwright cho đăng nhập/đọc hồ sơ trên môi trường test. | P0-07, P0-08 | Đã cấu hình/kiểm local; chờ CI hosted của commit mới, [bản ghi](docs/verification/P0-09.md) |
-| P0-10 | Kiểm chứng luồng React → gateway → Quarkus → JPA → PostgreSQL bằng tài khoản test; thử khách/A/B/admin và token lỗi/hết hạn. Đóng đường vòng miền profile đã chuyển; kiểm tra policy an toàn cho các miền chưa chuyển đang phục vụ FE cũ. Ghi bằng chứng, lệnh chạy và giới hạn. | P0-02, P0-09 | Chưa bắt đầu |
+| P0-10 | Kiểm chứng luồng React → gateway → Quarkus → JPA → PostgreSQL bằng tài khoản test; thử khách/A/B/admin và token lỗi/hết hạn. Đóng đường vòng miền profile đã chuyển; kiểm tra policy an toàn cho các miền chưa chuyển đang phục vụ FE cũ. Ghi bằng chứng, lệnh chạy và giới hạn. | P0-02, P0-09 | Đạt fixture integration + hosted cutover; chờ hai tài khoản Auth thật và CI, [bản ghi](docs/verification/P0-10.md) |
 
 **Điều kiện kết thúc P0:** clone sạch có thể dựng stack khi được cung cấp cấu hình test; đăng nhập và đọc hồ sơ hoạt động; khách/A/B/admin đúng quyền; không lộ thông tin riêng; CI nền đạt; migration và dữ liệu tồn tại sau tạo lại container. Bộ JWT fixture chỉ chứng minh logic test, không thay kiểm tra kết nối Auth thật trên staging.
 
@@ -256,7 +256,7 @@ Việc tiếp theo:
 | Giới hạn nhà cung cấp bản đồ/hạ tầng | Chốt tại P1-05 và cấu hình staging; không tự phát sinh gói trả phí |
 | Chậm do nhiều service hoặc lỗi liên kết | Giữ năm ranh giới hiện có, hợp đồng rõ và kiểm thử từng luồng; chưa thêm service/broker/database khi chưa có yêu cầu |
 
-Đã triển khai P0-01…04 theo [bản ghi](docs/verification/README.md). P0-02 chờ môi trường test Supabase truy cập được để đóng inventory/backup/migration thật. P0-05…10 chưa thực hiện; Docker/Java foundation không thay nghiệm thu luồng FE → JWT → JPA → PostgreSQL và không cho phép tự migrate/deploy production.
+Đã triển khai P0-01…08, kiểm stack browser/JWT/JPA/PostgreSQL bằng fixture, apply hardening/cutover và probe hosted theo [bản ghi](docs/verification/README.md). P0-09 chờ hosted CI kết thúc; P0-10 chờ hai tài khoản Supabase test xác nhận email và kiểm provider/email thật. Chưa đóng toàn P0, không cho phép tự migrate/deploy production.
 
 ## 13. Nguồn hướng dẫn triển khai
 

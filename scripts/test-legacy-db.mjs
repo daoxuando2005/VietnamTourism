@@ -65,7 +65,11 @@ try {
     ELSE RAISE EXCEPTION 'Fresh baseline verification failed'; END IF;
     END $$;
     SET ROLE anon; SELECT id,username FROM public.profiles; RESET ROLE;`,'fresh_legacy')
-  console.log('PASS: legacy migration, ownership/privacy matrix, idempotency, backup/restore')
+  const cutover=readFileSync(path.join(root,'supabase/migrations/202611210002_profile_api_cutover.sql'),'utf8')
+  sql(cutover,'fresh_legacy')
+  sql(readFileSync(path.join(root,'supabase/verification/cutover_probe.sql'),'utf8'),'fresh_legacy')
+  sql(cutover,'fresh_legacy')
+  console.log('PASS: legacy migration, ownership/privacy matrix, idempotency, backup/restore and profile cutover')
 } finally {
   if (created) {
     const r = spawnSync('docker', ['rm', '-f', name], { encoding: 'utf8' })
