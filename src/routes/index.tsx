@@ -42,6 +42,10 @@ const AdminDashboardPage = lazy(() =>
 const NotFoundPage = lazy(() =>
   import('@/pages/not-found/NotFoundPage').then((m) => ({ default: m.NotFoundPage })),
 )
+const ForgotPasswordPage = lazy(() => import('@/pages/auth/AuthPages').then(m => ({ default: m.ForgotPasswordPage })))
+const ResetPasswordPage = lazy(() => import('@/pages/auth/AuthPages').then(m => ({ default: m.ResetPasswordPage })))
+const CallbackPage = lazy(() => import('@/pages/auth/AuthPages').then(m => ({ default: m.CallbackPage })))
+const CompleteProfilePage = lazy(() => import('@/pages/auth/AuthPages').then(m => ({ default: m.CompleteProfilePage })))
 
 function PageLoader() {
   return <LoadingSpinner />
@@ -68,7 +72,7 @@ const router = createBrowserRouter([
       { path: ROUTES.search, element: withSuspense(SearchPage) },
       { path: ROUTES.favorites, element: <ProtectedRoute>{withSuspense(FavoritesPage)}</ProtectedRoute> },
       { path: ROUTES.profile, element: <ProtectedRoute>{withSuspense(ProfilePage)}</ProtectedRoute> },
-      { path: '/profile/:username', element: <ProtectedRoute>{withSuspense(ProfilePage)}</ProtectedRoute> },
+      { path: '/profile/:username', element: withSuspense(ProfilePage) },
       { path: ROUTES.profileEdit, element: <ProtectedRoute>{withSuspense(EditProfilePage)}</ProtectedRoute> },
     ],
   },
@@ -77,10 +81,14 @@ const router = createBrowserRouter([
     children: [
       { path: ROUTES.login, element: withSuspense(LoginPage) },
       { path: ROUTES.register, element: withSuspense(RegisterPage) },
+      { path: '/auth/forgot-password', element: withSuspense(ForgotPasswordPage) },
+      { path: '/auth/reset-password', element: withSuspense(ResetPasswordPage) },
+      { path: '/auth/callback', element: withSuspense(CallbackPage) },
+      { path: '/auth/complete-profile', element: withSuspense(CompleteProfilePage) },
     ],
   },
   {
-    element: <AdminLayout />,
+    element: <ProtectedRoute requireAdmin><AdminLayout /></ProtectedRoute>,
     children: [{ path: ROUTES.admin, element: withSuspense(AdminDashboardPage) }],
   },
   { path: '*', element: withSuspense(NotFoundPage) },

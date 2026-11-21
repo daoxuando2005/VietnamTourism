@@ -5,6 +5,7 @@ export interface User {
   avatarUrl?: string
   bio?: string
   createdAt: string
+  role?: 'MEMBER' | 'ADMIN'
 }
 
 export interface AuthCredentials {

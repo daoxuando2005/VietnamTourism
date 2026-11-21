@@ -1,8 +1,10 @@
 import { Outlet, useLocation } from 'react-router-dom'
 import { Footer, Header, MobileNav } from '@/components'
 import { ROUTES } from '@/routes/paths'
+import { useAuth } from '@/context/AuthContext'
 
 export function MainLayout() {
+  const { session } = useAuth()
   const { pathname } = useLocation()
   const isHome = pathname === ROUTES.home
 
@@ -15,7 +17,7 @@ export function MainLayout() {
           isHome ? '' : 'mx-auto max-w-7xl px-4 py-6 pb-20 sm:px-6 sm:py-8 md:pb-8 lg:px-8',
         ].join(' ')}
       >
-        <Outlet />
+        <div key={session?.user.id ?? 'guest'}><Outlet /></div>
       </main>
       <Footer />
       <MobileNav />

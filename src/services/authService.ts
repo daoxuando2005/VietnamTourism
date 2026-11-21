@@ -1,130 +1,94 @@
-import { supabase } from '@/lib/supabase'
+import type { Session } from '@supabase/supabase-js'
+import type { BootstrapRequest, OwnProfile } from '@/api/generated/types.gen'
 import type { User, RegisterPayload } from '@/types'
-import type { User as SupabaseUser } from '@supabase/supabase-js'
-import { PUBLIC_PROFILE_FIELDS } from '@/repositories/profileFields'
+import { supabase } from '@/lib/supabase'
+import { clearStoredSession } from '@/lib/authStorage'
+import { safeReturnTo } from '@/lib/authNavigation'
+import { ApiClientError } from './api/client'
+import { profileApi } from './profileApi'
 
-// Helper function to query/create profiles for mapped auth users
-async function ensureUserProfile(supabaseUser: SupabaseUser): Promise<User> {
-  const userId = supabaseUser.id
-  const email = supabaseUser.email || ''
-  const metadata = supabaseUser.user_metadata || {}
-  const username = metadata.username || email.split('@')[0] || 'user'
-  const displayName = metadata.displayName || username
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select(PUBLIC_PROFILE_FIELDS)
-    .eq('id', userId)
-    .single()
-
-  if (profile) {
-    return {
-      id: profile.id,
-      username: profile.username,
-      displayName: profile.display_name || profile.username,
-      avatarUrl: profile.avatar_url,
-      bio: profile.bio,
-      createdAt: profile.created_at,
-    }
-  }
-
-  // Create profile fallback (if Postgres trigger hasn't fired yet)
-  const cleanUsername = username.toLowerCase().replace(/[^a-z0-9]/g, '')
-  const newProfile = {
-    id: userId,
-    username: cleanUsername,
-    display_name: displayName,
-    avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
-    bio: 'Explorer of Vietnam.',
-  }
-
-  const { data: inserted } = await supabase
-    .from('profiles')
-    .insert(newProfile)
-    .select(PUBLIC_PROFILE_FIELDS)
-    .single()
-
-  if (inserted) {
-    return {
-      id: inserted.id,
-      username: inserted.username,
-      displayName: inserted.display_name || inserted.username,
-      avatarUrl: inserted.avatar_url,
-      bio: inserted.bio,
-      createdAt: inserted.created_at,
-    }
-  }
-
-  return {
-    id: userId,
-    username: cleanUsername,
-    displayName: displayName,
-    createdAt: new Date().toISOString(),
-  }
+export function userFromProfile(p: OwnProfile): User {
+  return { id: p.id, username: p.username, displayName: p.displayName, avatarUrl: p.avatarUrl ?? undefined,
+    bio: p.bio ?? undefined, createdAt: p.createdAt, role: p.role }
 }
+export function authErrorMessage(error: unknown) {
+  if (error instanceof ApiClientError) return error.message
+  const code = (error as { code?: string })?.code
+  const messages: Record<string, string> = {
+    invalid_credentials: 'Email hoặc mật khẩu không đúng.', email_not_confirmed: 'Vui lòng xác nhận email trước khi đăng nhập.',
+    user_already_exists: 'Email này đã được đăng ký.', weak_password: 'Mật khẩu chưa đủ mạnh.',
+    over_email_send_rate_limit: 'Bạn đã yêu cầu quá nhiều email. Vui lòng thử lại sau.',
+    otp_expired: 'Liên kết đã hết hạn. Vui lòng yêu cầu liên kết mới.',
+  }
+  return code && messages[code] ? messages[code] : 'Không thể hoàn tất thao tác. Vui lòng kiểm tra kết nối và thử lại.'
+}
+function callback(next: string) {
+  const target = next === '/auth/reset-password' ? next : safeReturnTo(next)
+  return `${window.location.origin}/auth/callback?next=${encodeURIComponent(target)}`
+}
+let callbackWork: { url: string; work: Promise<void> } | null = null
 
 export const authService = {
-  async login(email: string, password: string): Promise<User> {
-    if (!email || !password) {
-      throw new Error('Email and password are required.')
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
-
-    if (error || !data.user) {
-      throw new Error(error?.message || 'Login failed')
-    }
-
-    return ensureUserProfile(data.user)
+  async login(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
+    if (error) throw error
+    if (!data.session) throw new ApiClientError(401, 'UNAUTHENTICATED', 'Chưa nhận được phiên đăng nhập hợp lệ.')
+    return data.session
   },
-
-  async register(data: RegisterPayload): Promise<User> {
-    const { email, password, username, displayName } = data
-
-    if (!email || !password || !username || !displayName) {
-      throw new Error('All fields are required.')
-    }
-
-    if (password.length < 6) {
-      throw new Error('Password must be at least 6 characters.')
-    }
-
-    const cleanUsername = username.toLowerCase().trim().replace(/[^a-z0-9]/g, '')
-
-    const { data: signUpData, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          username: cleanUsername,
-          displayName: displayName.trim(),
-        },
-      },
-    })
-
-    if (error || !signUpData.user) {
-      throw new Error(error?.message || 'Registration failed')
-    }
-
-    return ensureUserProfile(signUpData.user)
+  async register(data: RegisterPayload, next = '/profile') {
+    const result = await supabase.auth.signUp({ email: data.email.trim(), password: data.password,
+      options: { data: { username: data.username.trim().toLowerCase(), displayName: data.displayName.trim() }, emailRedirectTo: callback(next) } })
+    if (result.error) throw result.error
+    return result.data.session
   },
-
-  async logout(): Promise<void> {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      throw new Error(error.message)
+  async profile(session: Session, signal?: AbortSignal): Promise<User> {
+    let data: OwnProfile
+    try { data = await profileApi.own(signal) }
+    catch (error) {
+      if (!(error instanceof ApiClientError) || error.status !== 404) throw error
+      const metadata = session.user.user_metadata
+      const username = typeof metadata.username === 'string' ? metadata.username.toLowerCase().trim() : `user_${session.user.id.replaceAll('-', '')}`
+      const displayName = typeof metadata.displayName === 'string' ? metadata.displayName.trim().slice(0, 100) : username
+      if (!/^[a-z0-9_]{3,40}$/.test(username)) throw new ApiClientError(409, 'PROFILE_SETUP_REQUIRED', 'Vui lòng chọn tên người dùng hợp lệ.')
+      data = await profileApi.bootstrap({ username, displayName: displayName || username })
     }
+    if (data.id !== session.user.id) throw new ApiClientError(401, 'SESSION_CHANGED', 'Phiên tài khoản đã thay đổi.')
+    return userFromProfile(data)
   },
-
-  async getCurrentUser(): Promise<User | null> {
-    const { data: { user }, error } = await supabase.auth.getUser()
-    if (error || !user) return null
-    return ensureUserProfile(user)
+  async completeProfile(data: BootstrapRequest) { return userFromProfile(await profileApi.bootstrap(data)) },
+  async logout() {
+    try {
+      const { error } = await supabase.auth.signOut({ scope: 'local' })
+      if (error) throw error
+    } finally { clearStoredSession() }
+  },
+  async requestPasswordReset(email: string) {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: callback('/auth/reset-password') })
+    if (error) throw error
+  },
+  async resetPassword(password: string) {
+    const { error } = await supabase.auth.updateUser({ password })
+    if (error) throw error
+  },
+  completeCallback(url: string): Promise<void> {
+    if (callbackWork?.url === url) return callbackWork.work
+    const work = (async () => {
+      const params = new URL(url).searchParams
+      if (params.has('error')) throw new ApiClientError(400, 'INVALID_CALLBACK', 'Liên kết không hợp lệ hoặc đã hết hạn.')
+      const code = params.get('code')
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        if (error) throw error
+      } else {
+        const token_hash = params.get('token_hash'), type = params.get('type')
+        if (!token_hash || !['email', 'signup', 'recovery'].includes(type ?? '')) throw new ApiClientError(400, 'INVALID_CALLBACK', 'Liên kết xác nhận không hợp lệ.')
+        const { error } = await supabase.auth.verifyOtp({ token_hash, type: type as 'email' | 'signup' | 'recovery' })
+        if (error) throw error
+      }
+    })()
+    callbackWork = { url, work }
+    return work
   },
 }
-
 export type { User }
 export default authService

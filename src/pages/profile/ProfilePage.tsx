@@ -53,7 +53,7 @@ export function ProfilePage() {
         // Fetch related stats & activities
         const [userReviews, userFavorites, userActivities] = await Promise.all([
           reviewService.getReviewsByUser(resolvedUser.id),
-          favoriteService.getFavoritesByUser(resolvedUser.id),
+          currentUser?.id === resolvedUser.id ? favoriteService.getFavoritesByUser(resolvedUser.id) : Promise.resolve([]),
           feedService.getUserFeed(resolvedUser.id),
         ])
 

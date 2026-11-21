@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
+import { AUTH_STORAGE_KEY, authStorage } from './authStorage'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 
@@ -25,5 +26,6 @@ if (supabaseAnonKey.split('.').length === 3) {
 
 export const supabase = createClient(
   supabaseUrl,
-  supabaseAnonKey
+  supabaseAnonKey,
+  { auth: { storage: authStorage, storageKey: AUTH_STORAGE_KEY, flowType: 'pkce', detectSessionInUrl: false, persistSession: true, autoRefreshToken: true } },
 )

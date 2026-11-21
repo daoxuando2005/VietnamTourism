@@ -1,0 +1,72 @@
+
+> vietnamtourism@0.0.0 test:unit
+> vitest run
+
+
+ RUN  v4.1.12 C:/Users/ASUS/OneDrive/Documents/GitHub/vietnam-tourism/VietnamTourism
+
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  22:54:40
+   Duration  290ms (transform 141ms, setup 0ms, import 357ms, tests 37ms, environment 0ms)
+
+
+> vietnamtourism@0.0.0 test:ui
+> playwright test --config playwright.ui.config.ts
+
+[WebServer] (node:28564) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+[WebServer] (node:16836) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 5 tests using 1 worker
+
+(node:8944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ok 1 tests\ui\auth.spec.ts:20:1 › validation keeps input, labels and keyboard focus at mobile width (4.1s)
+  ok 2 tests\ui\auth.spec.ts:37:1 › registration waits for email, PKCE confirmation creates profile and returns to original query (1.8s)
+  ok 3 tests\ui\auth.spec.ts:52:1 › wrong password preserves fields, login/logout and second account show the right profile (2.4s)
+  ok 4 tests\ui\auth.spec.ts:72:1 › recovery PKCE resets the password and signs out before the next login (1.8s)
+  ok 5 tests\ui\auth.spec.ts:86:1 › username conflict leads to profile completion instead of a fake login success (2.7s)
+
+  5 passed (17.1s)
+
+> vietnamtourism@0.0.0 lint
+> eslint .
+
+
+> vietnamtourism@0.0.0 build
+> tsc -b && vite build
+
+vite v8.3.8 building client environment for production...
+transforming...
+✓ 191 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                  0.47 kB │ gzip:   0.30 kB
+dist/assets/index-DtHOatbA.css                  49.35 kB │ gzip:   8.47 kB
+dist/assets/LoginPage-DzNLojDX.js                0.04 kB │ gzip:   0.06 kB
+dist/assets/RegisterPage-DmCVw8bB.js             0.05 kB │ gzip:   0.06 kB
+dist/assets/HomePage-Btz1SvGq.js                 0.21 kB │ gzip:   0.16 kB
+dist/assets/useMapSelection-BcRTjMvL.js          0.52 kB │ gzip:   0.30 kB
+dist/assets/NotFoundPage-tKNmRwoq.js             0.61 kB │ gzip:   0.35 kB
+dist/assets/AdminDashboardPage-DgLMKKkz.js       0.65 kB │ gzip:   0.36 kB
+dist/assets/ReviewsPage-Bm5CdhyJ.js              0.76 kB │ gzip:   0.49 kB
+dist/assets/SearchPage-CYIqqj5E.js               1.09 kB │ gzip:   0.63 kB
+dist/assets/EditProfilePage-BI0rR-9q.js          1.10 kB │ gzip:   0.47 kB
+dist/assets/VietnamMapPage-hIwkEE1P.js           1.13 kB │ gzip:   0.48 kB
+dist/assets/FeedPage-CdA6pn6y.js                 2.61 kB │ gzip:   1.13 kB
+dist/assets/FavoritesPage-bzPj1bud.js            4.00 kB │ gzip:   1.65 kB
+dist/assets/DestinationsPage-D9Hj91_M.js         6.52 kB │ gzip:   2.35 kB
+dist/assets/AuthPages-iHH5-3Vd.js                7.36 kB │ gzip:   2.93 kB
+dist/assets/ProfilePage-BEy1LE24.js              9.08 kB │ gzip:   2.90 kB
+dist/assets/DestinationDetailPage-BhSCpUnV.js    9.09 kB │ gzip:   2.64 kB
+dist/assets/index-D9jpNVbr.js                  594.98 kB │ gzip: 170.73 kB
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 595ms

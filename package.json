@@ -8,6 +8,9 @@
     "npm": "11.19.1"
   },
   "packageManager": "npm@11.19.1",
+  "overrides": {
+    "js-yaml": "5.5.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -15,11 +18,16 @@
     "check:contract": "node scripts/check-contract.mjs",
     "test:legacy-db": "node scripts/test-legacy-db.mjs",
     "test:gateway": "node scripts/test-gateway.mjs",
+    "generate:api": "openapi-ts",
+    "test:unit": "vitest run",
+    "test:ui": "playwright test --config playwright.ui.config.ts",
+    "configure:local": "node scripts/configure-local.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1",
     "@tailwindcss/vite": "^4.3.0",
+    "@tanstack/react-query": "5.108.2",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.17.0",
@@ -28,6 +36,8 @@
   "devDependencies": {
     "@apidevtools/swagger-parser": "12.1.0",
     "@eslint/js": "^10.0.1",
+    "@hey-api/openapi-ts": "0.99.0",
+    "@playwright/test": "1.65.1",
     "@types/node": "^24.12.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -38,6 +48,7 @@
     "globals": "^17.6.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.12"
+    "vite": "^8.0.12",
+    "vitest": "4.1.12"
   }
 }

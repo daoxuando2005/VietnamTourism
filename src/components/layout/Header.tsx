@@ -1,5 +1,6 @@
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ROUTES } from '@/routes/paths'
+import { useAuth } from '@/context/AuthContext'
 
 const navLinks = [
   { to: ROUTES.home, label: 'Home', end: true },
@@ -9,6 +10,7 @@ const navLinks = [
 ]
 
 export function Header() {
+  const { user, logout } = useAuth()
   const { pathname } = useLocation()
   const isHome = pathname === ROUTES.home
 
@@ -64,7 +66,10 @@ export function Header() {
           ))}
         </nav>
 
-        <Link
+        {user ? <div className="flex shrink-0 items-center gap-3">
+          <Link className={isHome ? 'py-3 text-white underline' : 'py-3 text-teal-800 underline'} to="/profile">Hồ sơ</Link>
+          <button type="button" className="min-h-11 rounded-lg bg-teal-700 px-3 text-sm font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2" onClick={() => void logout().catch(() => {})}>Đăng xuất</button>
+        </div> : <Link
           to={ROUTES.login}
           className={[
             'rounded-lg px-4 py-2 text-sm font-semibold transition-colors',
@@ -73,8 +78,8 @@ export function Header() {
               : 'bg-teal-700 text-white hover:bg-teal-800',
           ].join(' ')}
         >
-          Login
-        </Link>
+          Đăng nhập
+        </Link>}
       </div>
     </header>
   )
