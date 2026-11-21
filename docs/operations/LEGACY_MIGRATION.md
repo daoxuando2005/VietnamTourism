@@ -27,7 +27,7 @@ pg_restore --dbname="service=vt_restore_test" --exit-on-error backups/legacy-bef
 
 ## Áp dụng
 
-1. Phát hành frontend dùng projection công khai trước; giữ `VITE_LEGACY_PRIVATE_PROFILES_ENABLED=false` (mặc định) để không query bảng private chưa tồn tại. Trong maintenance window, chạy migration và kiểm SDK/quyền rồi rebuild FE với flag `true` để bật liên hệ owner. Không quay về wildcard private columns; flag chỉ điều khiển rollout phía client, RLS/grants mới là ranh giới bảo mật.
+1. Frontend hiện dùng API profile-service, không còn rollout flag private hoặc đường ghi profile legacy. Với bản cũ chưa chuyển, phải phát hành projection công khai trước hardening. Sau khi kiểm API mới, áp dụng [profile_api_cutover](../../supabase/migrations/202611210002_profile_api_cutover.sql) để đóng cả table/column grants và private read. Không chạy lại hardening 001 riêng sau cutover 002 vì sẽ mở lại quyền chuyển tiếp; luôn giữ trạng thái cuối của chuỗi migration.
 2. Chạy migration bằng owner trên target test đã restore. Script có transaction, lock/statement timeout; lỗi schema/lock sẽ rollback cả migration. Không dùng service-role key từ frontend. Script thay chính sách của đúng bảy bảng trong phạm vi đã inventory; không đổi Auth/Storage policy toàn project.
 
 ```text
@@ -36,13 +36,13 @@ psql "service=vt_restore_test" -X -v ON_ERROR_STOP=1 -f supabase/migrations/2026
 
 3. Refresh schema cache PostgREST nếu host không tự phát hiện: qua owner `NOTIFY pgrst, 'reload schema';`. Kiểm thử SDK các projection/nested join thực tế; wildcard private columns phải bị từ chối. Chạy lại migration một lần trên target test để kiểm tính lặp an toàn.
 4. Ma trận: khách đọc công khai, không đọc private/favorite; A tạo/sửa/xóa review/favorite của mình, không giả owner B; B không đọc/sửa private A; cấm sửa counters/ID/owner; metadata admin không thêm quyền; direct RPC trigger bị chặn; feed không xuất favorite mới/cũ. Kiểm tra signup username trùng, trigger update/delete review, giữ dữ liệu liên hệ sau copy.
-5. Chỉ áp dụng sang môi trường được cho phép tiếp theo khi có bằng chứng backup, restore, UI/SDK/JWT thật và đánh giá diff policy. Ghi SHA256 migration, version nguồn, actor, target, thời gian và kết quả vào bản ghi. Tác vụ hiện tại chỉ áp dụng vào container test cách ly.
+5. Chỉ áp dụng sang môi trường được cho phép tiếp theo khi có bằng chứng backup, restore, UI/SDK/JWT thật và đánh giá diff policy. Ghi version nguồn/remote, actor, target, thời gian và kết quả. Project test được chỉ định đã kiểm kê hoàn toàn rỗng và apply baseline/hardening/cutover; [P0-02](../verification/P0-02.md) và [P0-10](../verification/P0-10.md) lưu bằng chứng. Chưa được phép deploy/migrate production.
 
 ## Khôi phục và xử lý lỗi
 
 - Migration thất bại trước COMMIT: transaction tự rollback; xác minh trạng thái và sửa nguyên nhân trước khi chạy lại. Không chạy file reset để chữa lỗi.
 - Sau COMMIT: ưu tiên sửa tiến bằng migration mới giữ policy an toàn. Không khôi phục blanket policy `true` hoặc public private columns để làm FE cũ hoạt động.
-- Nếu lỗi FE: đóng traffic phần bị ảnh hưởng, sửa projection/roll forward cặp FE + DB. Không rollback FE cũ một mình về wildcard. Hai lần ghi public/private legacy không nguyên tử; báo chính xác phần đã lưu, xử lý lại theo chủ sở hữu.
+- Nếu lỗi FE: đóng traffic phần bị ảnh hưởng, sửa API/projection và roll forward cặp FE + DB. Không rollback FE cũ về wildcard hoặc mở lại legacy profile writer. Profile-service là nguồn ghi hồ sơ duy nhất sau cutover.
 - Nếu cần khôi phục dữ liệu: restore backup vào branch cách ly, đối chiếu với các ghi phát sinh sau snapshot rồi lập kế hoạch merge theo ID với owner. Không ghi đè database đang sử dụng hoặc tự rollback schema toàn project.
 - Giữ cột private cũ dưới quyền owner để kiểm tra hồi phục; chỉ loại bỏ trong migration riêng sau đối chiếu/backup và khi đường ghi cũ đã đóng. Dữ liệu favorite feed cũ vẫn được giữ nhưng bị giấu.
 

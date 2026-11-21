@@ -12,12 +12,12 @@ Cập nhật 21/11/2026 (Asia/Saigon). Mỗi bản ghi nêu thay đổi, test, p
 | P0-06 | Hoàn thành API local | Tổng 24 Java tests, ES256/JWKS, owner/admin/bootstrap | [Chi tiết](P0-06.md) |
 | P0-07 | Hoàn thành FE local | 13 unit + 5 UI tests, types, refresh/cache/callback | [Chi tiết](P0-07.md) |
 | P0-08 | Hoàn thành local | Image/Compose/volume, recreate/outage, non-root/read-only | [Chi tiết](P0-08.md) |
-| P0-09 | Chờ hosted CI kết thúc | Bộ kiểm local đạt, workflow đã push | [Chi tiết](P0-09.md) |
+| P0-09 | Hoàn thành local và hosted CI | 4/4 job xanh, gồm browser stack và migration cutover | [Chi tiết](P0-09.md) |
 | P0-10 | Đạt fixture integration và cutover; chờ Auth thật | 3 browser tests API/JPA thật, hosted RLS probe; thiếu hai tài khoản test | [Chi tiết](P0-10.md) |
 
 Supabase đã hoạt động sau Resume, kết nối plugin và kiểm kê bằng owner. P0-02 đã apply trên project test rỗng, kiểm RLS/ownership và advisor đạt; xem [bổ sung hosted](P0-02.md). Việc này chưa thay nghiệm thu toàn P0 với email/JWT/FE/JPA xuyên hệ thống.
 
-**Chưa đóng toàn P0:** thiếu hai tài khoản hosted đã xác nhận email trong file local để kiểm provider/email thật. Supabase đã Resume/healthy, không còn lỗi DNS. Fixture không thay nghiệm thu này; CI hosted được ghi riêng sau khi quan sát kết thúc.
+**Chưa đóng toàn P0:** thiếu hai tài khoản hosted đã xác nhận email trong file local để kiểm provider/email thật. Supabase đã Resume/healthy, không còn lỗi DNS. Fixture không thay nghiệm thu này. [CI mã cuối đã xanh, 4/4 job](https://github.com/daoxuando2005/VietnamTourism/actions/runs/44926301974).
 
 ## Cách chạy lại
 
@@ -49,4 +49,4 @@ Cần đúng toolchain ở [DEVELOPMENT.md](../operations/DEVELOPMENT.md) và Do
 
 FE còn cảnh báo bundle chính khoảng 595 kB, tối ưu P4. Test UI và stack dùng chung cổng fixture 54321 nên chạy tuần tự. Test stack chỉ dọn namespace/volume ngẫu nhiên của chính nó, giữ dữ liệu dev.
 
-Commit đã tạo: 473dc91 P0-01…04; d2da681 P0-05; a3ecc96 P0-02 hosted; cf67e9d P0-06; f71df62 P0-07; a1f2714 P0-08; 7a7ca41 P0-09. Bản ghi P0-10 và cập nhật CI ở commit tiếp theo. Env/password/token, dependency và build output không đưa vào Git.
+Commit đã tạo: 473dc91 P0-01…04; d2da681 P0-05; a3ecc96 P0-02 hosted; cf67e9d P0-06; f71df62 P0-07; a1f2714 P0-08; 7a7ca41 P0-09; b964613 P0-10 cutover và phần Auth thật còn thiếu; cd7fffe parser password test. Env/password/token, dependency và build output không đưa vào Git.

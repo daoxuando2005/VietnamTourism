@@ -1,5 +1,7 @@
 # Kiểm kê Supabase cũ — P0-02
 
+**Cập nhật sau Resume/cutover:** owner đã xác nhận project test hoàn toàn rỗng (Auth/Storage/public), apply baseline/hardening và profile cutover; 7 bảng RLS, probe ownership/guest/cross-user đạt và rollback toàn bộ fixture. Chi tiết [P0-02](../verification/P0-02.md), [P0-10](../verification/P0-10.md). Phần khảo sát nguồn ban đầu dưới đây giữ bối cảnh trước sửa; lỗi DNS không còn là blocker hiện tại.
+
 Mốc nguồn: `ff76724`, khảo sát ngày 21/11/2026; snapshot schema/seed gốc lưu tại [archive/legacy-demo.sql.txt](../../supabase/archive/legacy-demo.sql.txt). Đây là kiểm kê mã nguồn, không phải snapshot database hosted. Thử HEAD đọc số lượng công khai và JWKS bằng cấu hình local đều lỗi kết nối; xem [bằng chứng](../verification/evidence/P0-02-public-probe.json). Chưa có credential owner/test branch để đọc catalogs, backup và migrate hosted.
 
 | Miền | Bảng/query đang dùng | Phân loại và rủi ro trước sửa |
@@ -24,13 +26,12 @@ Mốc nguồn: `ff76724`, khảo sát ngày 21/11/2026; snapshot schema/seed g�
 
 ## Thay đổi tương thích FE trong đợt này
 
-Thay các wildcard `profiles(*)` bằng tập trường công khai rõ ràng; auth/profile đọc theo `PUBLIC_PROFILE_FIELDS`. Dữ liệu phone/birth được sao chép sang `profiles_private` với RLS chủ sở hữu; cột cũ giữ để khôi phục nhưng không cấp đọc/ghi API. Profile công khai theo username không lấy liên hệ. Profile owner đọc bảng private sau kiểm tra session; kiểm tra session phía client chỉ phục vụ UX, RLS là ranh giới thực.
+Các nested join legacy chỉ lấy trường profile công khai rõ ràng. ProfileRepository/Auth hiện đọc public/me qua gateway → Quarkus → JPA, không dùng Supabase profiles/private. Dữ liệu liên hệ cũ giữ dưới quyền owner để khôi phục; Data API không được đọc private sau cutover.
 
-Mặc định `VITE_LEGACY_PRIVATE_PROFILES_ENABLED=false`: không query bảng mới trước migration, không cho lưu liên hệ vào nguồn công khai cũ. Chỉ bật flag sau migration/SDK check và rebuild FE. Khi bật, method cập nhật legacy ghi public/private bằng hai request và báo rõ lỗi lưu một phần; transaction đầy đủ sẽ chuyển vào API ở P0-05/06/P2-01. Form sửa hồ sơ hiện chưa được hoàn thiện trong P0-01…04. Phải phát hành code projection trước migration thu hồi quyền wildcard. Không thu hồi toàn bộ Data API khi các miền khám phá/review/favorite vẫn dùng nó.
+Rollout flag VITE_LEGACY_PRIVATE_PROFILES_ENABLED và method cập nhật legacy đã bỏ. Profile-service là nguồn ghi hồ sơ duy nhất; Auth trigger giữ identity shadow read-only cho FK miền review/feed chưa chuyển. Form/API sửa hồ sơ đầy đủ thuộc P2. Không thu hồi Data API toàn project vì khám phá/review/favorite vẫn đang dùng; giữ RLS/column grants bảo vệ chúng.
 
-## Còn thiếu để đóng P0-02 trên môi trường thật
+## Kết quả hosted và phần còn thiếu
 
-- Chạy [inventory.sql](../../supabase/inventory.sql) bằng owner trên project test được phép; kiểm tra schema drift, function/role/default grants, row count, ảnh/bucket và Auth subject.
-- Chụp backup/test restore của dữ liệu thật được phép, có manifest/quyền xử lý dữ liệu riêng tư.
-- Áp dụng migration theo [runbook](LEGACY_MIGRATION.md), xác minh SDK/PostgREST và khách/A/B với JWT thật; chưa có bằng chứng này.
-- Không khẳng định policy hosted đã an toàn từ kiểm thử fixture hoặc từ file SQL.
+- Owner inventory/schema/Auth/Storage đã kiểm trên project test rỗng; không có dữ liệu người dùng để dump. Local backup/restore dùng fixture có dữ liệu và quyền thật, không thay backup production.
+- Hosted migration và probe SET ROLE/auth.uid thực tế đã đạt; không suy ra từ file SQL hoặc anon count.
+- Còn cần hai tài khoản hosted đã xác nhận email để kiểm JWT/email/browser thật ở P0-10. Database probe không thay Auth E2E.
