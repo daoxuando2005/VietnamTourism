@@ -1,10 +1,12 @@
 // Opt-in verification against the configured Supabase test project and LOCAL stack.
 // Never logs credentials/JWT, browser traces, screenshots, DOM, or provider bodies.
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { parseEnv } from 'node:util'
 import { createClient } from '@supabase/supabase-js'
 import { chromium } from '@playwright/test'
 import { loadEnv } from 'vite'
-const env=loadEnv('e2e',process.cwd(),'')
+// Passwords are literal, including $, rather than dotenv-expand expressions.
+const env={...loadEnv('development',process.cwd(),''),...(existsSync('.env.e2e.local')?parseEnv(readFileSync('.env.e2e.local','utf8')):{})}
 const required=['E2E_EMAIL_A','E2E_PASSWORD_A','E2E_EMAIL_B','E2E_PASSWORD_B']
 if(!existsSync('.env.e2e.local')||required.some(k=>!env[k]))throw new Error('Missing .env.e2e.local test accounts; live verification has NOT run')
 const provider=new URL(env.VITE_SUPABASE_URL)
