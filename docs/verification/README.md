@@ -5,11 +5,11 @@ Cập nhật 21/11/2026 (Asia/Saigon), nguồn trước thay đổi `ff76724`. M
 | Nhiệm vụ | Trạng thái | Kiểm chứng đã có | Bản ghi |
 | --- | --- | --- | --- |
 | P0-01 | Hoàn thành thiết lập local | Toolchain/checksum, clean FE install/build/lint, audit 0 | [Chi tiết](P0-01.md) |
-| P0-02 | **Chờ điều kiện** để đóng đầy đủ | Migration/ownership/privacy/trigger/idempotency/backup-restore trên PostgreSQL local đạt; chưa hosted | [Chi tiết](P0-02.md) |
+| P0-02 | Hoàn thành migration quyền test | Local backup/restore và ownership probe hosted đạt; project ban đầu rỗng, không seed demo | [Chi tiết](P0-02.md) |
 | P0-03 | Hoàn thành hợp đồng ban đầu | OpenAPI schema, public field boundary; runtime đối chiếu trong P0-04 đạt | [Chi tiết](P0-03.md) |
 | P0-04 | Hoàn thành khung/build/test/gateway | Quarkus 10/10; clean Linux images; gateway/runtime contract/non-root/dependency recovery đạt | [Chi tiết](P0-04.md) |
 
-**Chưa được coi cả bốn nhiệm vụ đã nghiệm thu đầy đủ trên môi trường thật.** Supabase URL cấu hình hiện tại không phân giải DNS (`ENOTFOUND`), chưa có owner inventory/test branch để migrate hosted. Phần chuẩn bị hợp đồng/khung độc lập P0-03/04 không bỏ điều kiện đóng P0-02 hoặc điều kiện kết thúc P0.
+Supabase đã hoạt động sau Resume, kết nối plugin và kiểm kê bằng owner. P0-02 đã apply trên project test rỗng, kiểm RLS/ownership và advisor đạt; xem [bổ sung hosted](P0-02.md). Việc này chưa thay nghiệm thu toàn P0 với email/JWT/FE/JPA xuyên hệ thống.
 
 Đã hoàn tất kiểm thử trong phạm vi khung local nêu trên; chưa test hoàn chỉnh nghiệp vụ/Auth/JPA/FE xuyên hệ thống. GET profile từ DB thật, JWT/admin, login/reset/email, client/types, full Compose/persistence/volume và E2E/CI nền đầy đủ thuộc P0-05…10, **chưa làm trong tác vụ này**. Service mới hiện liveness 200, readiness và đọc profile hợp lệ 503 có chủ đích cho đến khi P0-05 cung cấp DB.
 

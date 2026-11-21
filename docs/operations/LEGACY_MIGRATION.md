@@ -4,6 +4,8 @@ Phạm vi: schema cũ trong repo, trước khi chuyển miền sang Quarkus. Mig
 
 ## Chuẩn bị và export/restore
 
+Với project được owner inventory xác nhận hoàn toàn rỗng: lưu snapshot metadata/count Auth/Storage, chạy `202611210000_empty_legacy_baseline.sql` rồi migration hardening. Không chạy baseline lên schema legacy đang tồn tại; không seed demo. Version do Supabase migration API sinh được ánh xạ tới source trong bản ghi hosted; kiểm history trước khi dùng CLI `db push`.
+
 1. Xác định project/branch test được phép và người có quyền database owner. Không lấy URL từ `.env` làm bằng chứng được phép migrate production. Mở khoảng dừng ghi cho phần cần xuất/chuyển nhất quán; ghi source version/ngày và người thực hiện.
 2. Chạy [inventory.sql](../../supabase/inventory.sql); lưu catalogs/trigger definitions/policies/grants, schema và row count vào nơi riêng có kiểm soát. Đối chiếu schema thật với repo. Nếu khác hoặc có hàm/grants/role tùy chỉnh, dừng áp dụng, bổ sung migration/test tương ứng; không xóa policy của hạ tầng không thuộc miền này một cách suy đoán.
 3. Dùng PostgreSQL client tương thích nguồn, kết nối direct/session endpoint đã xác minh; credentials trong `.pg_service.conf`/`.pgpass` hoặc secret store, không trong lệnh được commit. Ví dụ backup public schema của miền legacy:

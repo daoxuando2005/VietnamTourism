@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-21",
+  "project": "aljsmtodrkspqxbutiuz",
+  "provider": "Supabase connected database tools",
+  "status": "ACTIVE_HEALTHY",
+  "before": {"publicTables": [], "publicFunctions": [], "publicPolicies": [], "authUsers": 0, "storageBuckets": 0, "storageObjects": 0},
+  "migrations": [
+    {"version": "20261121151133", "name": "empty_legacy_baseline", "source": "supabase/migrations/202611210000_empty_legacy_baseline.sql"},
+    {"version": "20261121152715", "name": "legacy_access_hardening", "source": "supabase/migrations/202611210001_legacy_access_hardening.sql"}
+  ],
+  "after": {"tablesWithRls": 7, "policies": 16, "guestPrivateColumnReadable": false, "guestFavoritesReadable": false, "anonCanExecuteAuthTrigger": false, "securityAdvisorLints": []},
+  "ownershipProbe": {"source": "supabase/verification/ownership_probe.sql", "result": "passed", "fixturesRolledBack": true},
+  "afterRollback": {"profiles": 0, "provinces": 0, "destinations": 0, "reviews": 0, "favorites": 0, "feedActivities": 0, "privateProfiles": 0, "authUsers": 0},
+  "backup": "Inventory snapshot before changes: verified empty project; no user data or storage bytes existed to export. PostgreSQL fixture backup/restore was separately verified locally.",
+  "limitations": ["Ownership probe uses database roles and claim context; it does not prove provider email confirmation or JWT issuance.", "Supabase tool-generated migration versions are mapped to local source files above; do not blindly run CLI db push against a different migration history."]
+}

@@ -52,6 +52,19 @@ try {
     SELECT test_support.denied('SELECT phone_number FROM public.profiles','restored column protection');
     SELECT test_support.assert((SELECT count(*)=0 FROM public.feed_activities),'restored privacy policies');
     RESET ROLE;`, 'restored')
+  docker(['exec', name, 'createdb', '-U', 'postgres', 'fresh_legacy'])
+  sql(`CREATE SCHEMA auth; GRANT USAGE ON SCHEMA auth TO anon,authenticated;
+    CREATE TABLE auth.users(id uuid PRIMARY KEY,email text,raw_user_meta_data jsonb);
+    CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $$ SELECT nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;`, 'fresh_legacy')
+  sql(readFileSync(path.join(root,'supabase/migrations/202611210000_empty_legacy_baseline.sql'),'utf8'),'fresh_legacy')
+  sql(migration,'fresh_legacy')
+  sql(`DO $$ BEGIN
+    IF (SELECT count(*) FROM pg_tables WHERE schemaname='public' AND rowsecurity)=7
+      AND (SELECT count(*) FROM public.profiles)=0 THEN
+      RAISE NOTICE 'PASS: fresh baseline and hardening create seven protected tables without seed';
+    ELSE RAISE EXCEPTION 'Fresh baseline verification failed'; END IF;
+    END $$;
+    SET ROLE anon; SELECT id,username FROM public.profiles; RESET ROLE;`,'fresh_legacy')
   console.log('PASS: legacy migration, ownership/privacy matrix, idempotency, backup/restore')
 } finally {
   if (created) {

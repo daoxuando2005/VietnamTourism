@@ -4,45 +4,40 @@
   "results": [
     {
       "table": "provinces",
-      "status": "connection-failed",
-      "visibleCount": null,
-      "reason": "ENOTFOUND"
+      "status": 404,
+      "visibleCount": null
     },
     {
       "table": "profiles",
-      "status": "connection-failed",
-      "visibleCount": null,
-      "reason": "ENOTFOUND"
+      "status": 404,
+      "visibleCount": null
     },
     {
       "table": "destinations",
-      "status": "connection-failed",
-      "visibleCount": null,
-      "reason": "ENOTFOUND"
+      "status": 404,
+      "visibleCount": null
     },
     {
       "table": "reviews",
-      "status": "connection-failed",
-      "visibleCount": null,
-      "reason": "ENOTFOUND"
+      "status": 404,
+      "visibleCount": null
     },
     {
       "table": "favorites",
-      "status": "connection-failed",
-      "visibleCount": null,
-      "reason": "ENOTFOUND"
+      "status": 404,
+      "visibleCount": null
     },
     {
       "table": "feed_activities",
-      "status": "connection-failed",
-      "visibleCount": null,
-      "reason": "ENOTFOUND"
+      "status": 404,
+      "visibleCount": null
     }
   ],
   "signing": {
-    "status": "connection-failed",
-    "algorithms": [],
-    "reason": "ENOTFOUND"
+    "status": 200,
+    "algorithms": [
+      "ES256"
+    ]
   },
   "limitation": "Anon-visible counts are not owner inventory or proof of deployed RLS, trigger definitions, grants, backups or Auth E2E."
 }

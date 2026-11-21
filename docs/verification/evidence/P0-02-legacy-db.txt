@@ -1,7 +1,7 @@
-$ docker run -d --rm --name vt-p0-legacy-30016 --tmpfs /var/lib/postgresql/data -e POSTGRES_PASSWORD=local-test-only postgres:17.12-alpine
-cdd319348ab3dc239d16d8bca4382410a5187d8d168a94996e3f29c8dcfb30f7
+$ docker run -d --rm --name vt-p0-legacy-24864 --tmpfs /var/lib/postgresql/data -e POSTGRES_PASSWORD=local-test-only postgres:17.12-alpine
+10993497494b9cbab4ce00f98459575fa6f91e5b37798c2f88bb68b17fab4c48
 
-$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
 CREATE ROLE
 CREATE ROLE
 CREATE SCHEMA
@@ -42,7 +42,7 @@ CREATE TRIGGER
 GRANT
 GRANT
 
-$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
 BEGIN
 SET
 SET
@@ -82,7 +82,7 @@ CREATE FUNCTION
 REVOKE
 COMMIT
 
-$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
 CREATE SCHEMA
 GRANT
 CREATE FUNCTION
@@ -308,7 +308,7 @@ NOTICE:  PASS: owner deletion removes review activity
 NOTICE:  PASS: owner can remove favorite
 NOTICE:  PASS: existing favorite activities remain private
 
-$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
 BEGIN
 SET
 SET
@@ -349,7 +349,7 @@ REVOKE
 COMMIT
 NOTICE:  relation "profiles_private" already exists, skipping
 
-$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d postgres
  assert
 --------
 
@@ -363,13 +363,13 @@ $ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d po
 NOTICE:  PASS: legacy contact values preserved
 NOTICE:  PASS: migration preserves existing private feed rows
 
-$ docker exec vt-p0-legacy-30016 pg_dump -U postgres -Fc -f /tmp/legacy.dump postgres
+$ docker exec vt-p0-legacy-24864 pg_dump -U postgres -Fc -f /tmp/legacy.dump postgres
 
-$ docker exec vt-p0-legacy-30016 createdb -U postgres restored
+$ docker exec vt-p0-legacy-24864 createdb -U postgres restored
 
-$ docker exec vt-p0-legacy-30016 pg_restore -U postgres -d restored --exit-on-error /tmp/legacy.dump
+$ docker exec vt-p0-legacy-24864 pg_restore -U postgres -d restored --exit-on-error /tmp/legacy.dump
 
-$ docker exec -i vt-p0-legacy-30016 psql -X -v ON_ERROR_STOP=1 -U postgres -d restored
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d restored
  assert
 --------
 
@@ -396,5 +396,85 @@ NOTICE:  PASS: restore profile row counts
 NOTICE:  PASS: restore private data row counts
 NOTICE:  PASS: restored column protection
 NOTICE:  PASS: restored privacy policies
+
+$ docker exec vt-p0-legacy-24864 createdb -U postgres fresh_legacy
+
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d fresh_legacy
+CREATE SCHEMA
+GRANT
+CREATE TABLE
+CREATE FUNCTION
+
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d fresh_legacy
+DO
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE TABLE
+ALTER TABLE
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+CREATE TRIGGER
+CREATE TRIGGER
+CREATE TRIGGER
+
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d fresh_legacy
+BEGIN
+SET
+SET
+CREATE TABLE
+INSERT 0 0
+DO
+DO
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE POLICY
+CREATE FUNCTION
+CREATE FUNCTION
+CREATE FUNCTION
+REVOKE
+COMMIT
+
+$ docker exec -i vt-p0-legacy-24864 psql -X -v ON_ERROR_STOP=1 -U postgres -d fresh_legacy
+DO
+SET
+ id | username
+----+----------
+(0 rows)
+
+RESET
+NOTICE:  PASS: fresh baseline and hardening create seven protected tables without seed
 
 Cleanup test container: OK
