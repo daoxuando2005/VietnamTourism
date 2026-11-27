@@ -69,18 +69,48 @@ test('wrong password preserves fields, login/logout and second account show the 
   await expect(page.getByRole('heading', { name: 'Tài khoản B', exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Tài khoản A', exact: true })).not.toBeVisible()
 })
-test('recovery PKCE resets the password and signs out before the next login', async ({ page, request }) => {
+test('recovery waits for an explicit confirmation and uses PKCE to reset the password', async ({ browser, page, request }) => {
   await page.goto('/auth/forgot-password')
   await page.getByLabel('Email', { exact: true }).fill('a@example.test')
   await page.getByRole('button', { name: 'Quên mật khẩu', exact: true }).click()
   await expect(page.getByRole('status')).toContainText('Yêu cầu đã được tiếp nhận')
   const mailbox = await (await request.get('http://127.0.0.1:54321/__test/mailbox?email=a@example.test')).json()
-  await page.goto(`/auth/callback?code=${mailbox[0].code}&next=%2Fauth%2Freset-password`)
+  const callback = new URL('/auth/callback', page.url())
+  callback.searchParams.set('next', '/auth/reset-password')
+  const verification = new URL('http://127.0.0.1:54321/auth/v1/verify')
+  verification.search = new URLSearchParams({ token: 'fixture-recovery-link', type: 'recovery', redirect_to: callback.href }).toString()
+  const emailLink = new URL('/auth/callback', page.url())
+  emailLink.searchParams.set('confirmation_url', verification.href)
+
+  let verificationRequests = 0
+  await page.route(verification.href, async route => {
+    verificationRequests++
+    callback.searchParams.set('code', mailbox[0].code)
+    await route.fulfill({ status: 303, headers: { location: callback.href } })
+  })
+
+  const otherBrowser = await browser.newPage()
+  try {
+    await otherBrowser.goto(emailLink.href)
+    await expect(otherBrowser.getByRole('alert')).toContainText('trình duyệt đã yêu cầu email')
+    await expect(otherBrowser.getByRole('button', { name: 'Tiếp tục đặt lại mật khẩu' })).toHaveCount(0)
+  } finally {
+    await otherBrowser.close()
+  }
+
+  await page.goto(emailLink.href)
+  const continueReset = page.getByRole('button', { name: 'Tiếp tục đặt lại mật khẩu', exact: true })
+  await expect(continueReset).toBeVisible()
+  await page.reload()
+  await expect(continueReset).toBeVisible()
+  expect(verificationRequests).toBe(0)
+  await continueReset.click()
   await page.getByLabel('Mật khẩu', { exact: true }).fill('fixture-updated-password')
   await page.getByLabel('Nhập lại mật khẩu', { exact: true }).fill('fixture-updated-password')
   await page.getByRole('button', { name: 'Đặt lại mật khẩu', exact: true }).click()
   await expect(page).toHaveURL(/\/auth\/login\?reset=success$/)
   await expect(page.getByRole('status')).toContainText('Đã đổi mật khẩu')
+  expect(verificationRequests).toBe(1)
   expect(await page.evaluate(() => localStorage.getItem('vietnam-tourism-auth-v1'))).toBeNull()
 })
 test('username conflict leads to profile completion instead of a fake login success', async ({page,request})=>{

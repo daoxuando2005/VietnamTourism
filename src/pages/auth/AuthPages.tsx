@@ -3,7 +3,8 @@ import type { FormEvent } from 'react'
 import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { Button, Card, LoadingSpinner } from '@/components'
 import { useAuth } from '@/context/AuthContext'
-import { safeReturnTo } from '@/lib/authNavigation'
+import { readEmailVerificationLink, safeReturnTo } from '@/lib/authNavigation'
+import { AUTH_STORAGE_KEY, authStorage } from '@/lib/authStorage'
 import { authErrorMessage, authService } from '@/services/authService'
 import { ApiClientError } from '@/services/api/client'
 
@@ -101,16 +102,49 @@ export function RegisterPage() { return <AuthForm mode="register" /> }
 export function ForgotPasswordPage() { return <AuthForm mode="forgot" /> }
 export function ResetPasswordPage() { return <AuthForm mode="reset" /> }
 export function CompleteProfilePage() { return <AuthForm mode="complete" /> }
+
 export function CallbackPage() {
+  const [params] = useSearchParams()
+  if (params.has('confirmation_url')) {
+    return <EmailLinkConfirmation value={params.get('confirmation_url')} />
+  }
+  return <CallbackExchange />
+}
+
+function EmailLinkConfirmation({ value }: { value: string | null }) {
+  const link = readEmailVerificationLink(value, import.meta.env.VITE_SUPABASE_URL, window.location.origin)
+  const hasVerifier = Boolean(authStorage.getItem(`${AUTH_STORAGE_KEY}-code-verifier`))
+  const title = link?.recovery ? 'Tiếp tục đặt lại mật khẩu' : 'Xác nhận email'
+
+  return <Card>
+    <h1 className="text-xl font-bold">{title}</h1>
+    {!link || !hasVerifier ? <>
+      <p role="alert" className="mt-3 text-sm text-red-800">
+        {link ? 'Hãy mở liên kết trong trình duyệt đã yêu cầu email. Bạn cũng có thể yêu cầu thư mới tại đây.' : 'Địa chỉ xác nhận email không hợp lệ.'}
+      </p>
+      <Link className="mt-4 inline-flex min-h-11 items-center text-teal-800 underline focus-visible:outline-2"
+        to={link?.recovery ? '/auth/forgot-password' : '/auth/login'}>
+        {link?.recovery ? 'Yêu cầu liên kết mới' : 'Quay lại đăng nhập'}
+      </Link>
+    </> : <>
+      <p className="mt-3 text-sm text-gray-700">Bấm nút bên dưới để xác minh liên kết từ email của bạn.</p>
+      <Button className="mt-5 min-h-11" type="button" onClick={() => window.location.replace(link.href)}>{title}</Button>
+    </>}
+  </Card>
+}
+
+function CallbackExchange() {
   const auth = useAuth(), navigate = useNavigate(), location = useLocation()
   const [error, setError] = useState('')
   const { refreshProfile } = auth
+  const candidate = new URLSearchParams(location.search).get('next')
+  const recovery = candidate === '/auth/reset-password'
   useEffect(() => {
     let active = true
-    const url = window.location.href, candidate = new URL(url).searchParams.get('next')
-    const next = candidate === '/auth/reset-password' ? candidate : safeReturnTo(candidate)
+    const url = window.location.href
+    const next = recovery ? '/auth/reset-password' : safeReturnTo(candidate)
     void authService.completeCallback(url).then(async () => {
-      if (next !== '/auth/reset-password') await refreshProfile()
+      if (!recovery) await refreshProfile()
       if (active) navigate(next, { replace: true })
     }).catch(failure => {
       if (!active) return
@@ -118,6 +152,13 @@ export function CallbackPage() {
       else setError(authErrorMessage(failure))
     })
     return () => { active = false }
-  }, [location.key, navigate, refreshProfile])
-  return <Card>{error ? <><h1 className="text-xl font-bold">Chưa thể xác nhận phiên</h1><p role="alert" className="mt-3 text-red-800">{error}</p><Link className="mt-4 inline-block text-teal-800 underline" to="/auth/login">Quay lại đăng nhập</Link></> : <LoadingSpinner label="Đang xác nhận email và phiên đăng nhập..." />}</Card>
+  }, [candidate, recovery, location.key, navigate, refreshProfile])
+  return <Card>{error ? <>
+    <h1 className="text-xl font-bold">Chưa thể xác nhận phiên</h1>
+    <p role="alert" className="mt-3 text-red-800">{error}</p>
+    <Link className="mt-4 inline-flex min-h-11 items-center text-teal-800 underline focus-visible:outline-2"
+      to={recovery ? '/auth/forgot-password' : '/auth/login'}>
+      {recovery ? 'Yêu cầu liên kết mới' : 'Quay lại đăng nhập'}
+    </Link>
+  </> : <LoadingSpinner label="Đang xác nhận email và phiên đăng nhập..." />}</Card>
 }
