@@ -32,6 +32,7 @@ try {
   browser=await chromium.launch({headless:true})
   const page=await browser.newPage()
   for(const name of ['A','B']) {
+    step=`browser sign-in and profile reload for ${name}`
     await page.goto(`${base}/auth/login?returnTo=%2Fprofile%3Fsource%3Dlive`)
     await page.getByLabel('Email',{exact:true}).fill(env[`E2E_EMAIL_${name}`])
     await page.getByLabel('Mật khẩu',{exact:true}).fill(env[`E2E_PASSWORD_${name}`])
@@ -45,9 +46,12 @@ try {
     await page.reload()
     await page.getByRole('button',{name:'Đăng xuất',exact:true}).waitFor()
     check((await api('/me/profile',stored.access_token)).status===200,`reload keeps durable profile ${name}`)
+    step=`browser logout for ${name}`
     await page.getByRole('button',{name:'Đăng xuất',exact:true}).click()
     await page.waitForURL(/\/auth\/login/)
-    check(await page.evaluate(()=>localStorage.getItem('vietnam-tourism-auth-v1'))===null,`logout clears session ${name}`)
+    // Route protection redirects while Supabase finishes signing out.
+    await page.waitForFunction(()=>localStorage.getItem('vietnam-tourism-auth-v1')===null,undefined,{timeout:15000})
+    report.checks.push(`logout clears session ${name}`)
   }
   step='public/private isolation'
   const ownA=await(await api('/me/profile',sessions[0].access_token)).json()
